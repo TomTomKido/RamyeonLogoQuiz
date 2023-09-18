@@ -7,24 +7,8 @@
 
 import SwiftUI
 
-struct Logo: Hashable {
-    private let beforeName: String
-    private let afterName: String
-    var solved: Bool
-    
-    init(name: String, solved: Bool = false) {
-        self.beforeName = "\(name)_before"
-        self.afterName = "\(name)_after"
-        self.solved = solved
-    }
-    
-    var logoName: String {
-        solved ? afterName : beforeName
-    }
-}
-
 struct LogoListView: View {
-    let logoList: [Logo] = [Logo(name: "sony")]
+    let logoList: [Logo] = Logo.bongjiPaldo
     
     var body: some View {
         ZStack {

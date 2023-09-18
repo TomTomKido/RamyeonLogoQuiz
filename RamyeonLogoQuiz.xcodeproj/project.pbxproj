@@ -13,6 +13,7 @@
 		D4D6607F2AA5F0C900730B6D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D4D6607E2AA5F0C900730B6D /* Preview Assets.xcassets */; };
 		D4D660862AA600CD00730B6D /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D660852AA600CD00730B6D /* MainView.swift */; };
 		D4D6608A2AA6078E00730B6D /* LogoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D660892AA6078E00730B6D /* LogoListView.swift */; };
+		D4E144552AB81D9500EC93D7 /* Logo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E144542AB81D9500EC93D7 /* Logo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		D4D6607E2AA5F0C900730B6D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D4D660852AA600CD00730B6D /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		D4D660892AA6078E00730B6D /* LogoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoListView.swift; sourceTree = "<group>"; };
+		D4E144542AB81D9500EC93D7 /* Logo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				D4D660792AA5F0C500730B6D /* RootView.swift */,
 				D4D660852AA600CD00730B6D /* MainView.swift */,
 				D4D660892AA6078E00730B6D /* LogoListView.swift */,
+				D4E144542AB81D9500EC93D7 /* Logo.swift */,
 				D4D6607B2AA5F0C900730B6D /* Assets.xcassets */,
 				D4D6607D2AA5F0C900730B6D /* Preview Content */,
 			);
@@ -144,6 +147,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D4D6607A2AA5F0C500730B6D /* RootView.swift in Sources */,
+				D4E144552AB81D9500EC93D7 /* Logo.swift in Sources */,
 				D4D6608A2AA6078E00730B6D /* LogoListView.swift in Sources */,
 				D4D660862AA600CD00730B6D /* MainView.swift in Sources */,
 				D4D660782AA5F0C500730B6D /* RamyeonLogoQuizApp.swift in Sources */,
