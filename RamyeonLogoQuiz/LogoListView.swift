@@ -14,8 +14,8 @@ struct Logo: Hashable {
     var solved: Bool
     
     init(name: String, solved: Bool = false) {
-        self.beforeName = "\(name)_before"
-        self.afterName = "\(name)_after"
+        self.beforeName = "\(name)_q"
+        self.afterName = "\(name)_a"
         self.testName = name
         self.solved = solved
     }
@@ -55,6 +55,7 @@ struct LogoListView: View {
             }
             .background(Color.blue)
         }
+        .navigationTitle("라면 퀴즈")
     }
     
     func gridImage(logo: Logo) -> some View {
