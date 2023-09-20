@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D4B259C12AB9C9F000E28289 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B259C02AB9C9F000E28289 /* GameView.swift */; };
 		D4D660782AA5F0C500730B6D /* RamyeonLogoQuizApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D660772AA5F0C500730B6D /* RamyeonLogoQuizApp.swift */; };
 		D4D6607A2AA5F0C500730B6D /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D660792AA5F0C500730B6D /* RootView.swift */; };
 		D4D6607C2AA5F0C900730B6D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D4D6607B2AA5F0C900730B6D /* Assets.xcassets */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D4B259C02AB9C9F000E28289 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
 		D4D660742AA5F0C500730B6D /* RamyeonLogoQuiz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RamyeonLogoQuiz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4D660772AA5F0C500730B6D /* RamyeonLogoQuizApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RamyeonLogoQuizApp.swift; sourceTree = "<group>"; };
 		D4D660792AA5F0C500730B6D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 				D4D660792AA5F0C500730B6D /* RootView.swift */,
 				D4D660852AA600CD00730B6D /* MainView.swift */,
 				D4D660892AA6078E00730B6D /* LogoListView.swift */,
+				D4B259C02AB9C9F000E28289 /* GameView.swift */,
 				D4D6607B2AA5F0C900730B6D /* Assets.xcassets */,
 				D4D6607D2AA5F0C900730B6D /* Preview Content */,
 			);
@@ -147,6 +150,7 @@
 				D4D6608A2AA6078E00730B6D /* LogoListView.swift in Sources */,
 				D4D660862AA600CD00730B6D /* MainView.swift in Sources */,
 				D4D660782AA5F0C500730B6D /* RamyeonLogoQuizApp.swift in Sources */,
+				D4B259C12AB9C9F000E28289 /* GameView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
