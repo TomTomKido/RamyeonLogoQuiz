@@ -8,18 +8,38 @@
 import Foundation
 
 struct Logo: Hashable {
-    private let beforeName: String
-    private let afterName: String
-    var solved: Bool
+    private let name: String
+    private(set) var solved: Bool
     
     init(name: String, solved: Bool = false) {
-        self.beforeName = "\(name)_q"
-        self.afterName = "\(name)_a"
+        self.name = name
         self.solved = solved
     }
     
     var logoName: String {
         solved ? afterName : beforeName
+    }
+    
+    var beforeName: String {
+        "\(name)_q"
+    }
+    
+    var afterName: String {
+        "\(name)_a"
+    }
+    
+    var letterCount: Int {
+        name.count
+    }
+    
+    var letters: [String] {
+        name.map {
+            String($0)
+        }
+    }
+    
+    mutating func didSolve() {
+        solved = true
     }
     
     static let bongjiPaldo: [Logo] = ["꼬꼬면", "남자라면", "비빔면레몬", "왕뚜껑", "일품삼선짜장", "일품해물라면", "틈새라면", "틈새라면고기짬뽕", "틈새라면매운김치", "틈새라면매운짜장", "틈새라면매운카레", "팔도비빔면", "팔도비빔면매운맛", "팔도비빔쫄면", "팔도짜장면"]
