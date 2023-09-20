@@ -8,20 +8,23 @@
 import SwiftUI
 
 struct LogoListView: View {
-    let logoList: [Logo] = Logo.bongjiPaldo
+    let logoList: [Logo] = Logo.bongjiPaldo + Logo.bongjiOttugi + Logo.bongjiNongshim
     let columns = Array(repeating: GridItem(.flexible(minimum: 100, maximum: 150)), count: 3)
     
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack {
+                VStack(alignment: .leading) {
                     LazyVGrid(columns: columns) {
                         ForEach(logoList, id: \.self) { logo in
-                            gridImage(logo: logo)
+                            NavigationLink {
+                                Text("hi")
+                            } label: {
+                                gridImage(logo: logo)
+                            }
                         }
                     }
                     .padding()
-                    Spacer()
                 }
             }
             .background(Color.blue)
@@ -36,7 +39,7 @@ struct LogoListView: View {
                 .foregroundColor(.cyan)
             Image(logo.logoName)
                 .resizable()
-                .frame(width:100, height: 100)
+                .frame(width: .infinity, height: 110)
             if logo.solved {
                 solvedCover
                 checkMark
