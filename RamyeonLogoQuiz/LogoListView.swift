@@ -29,7 +29,7 @@ struct LogoListView: View {
                     }
                 }
             }
-            .background(Color.blue)
+            .background(Color.basicBlue)
         }
         .navigationTitle("라면 퀴즈")
     }
@@ -41,7 +41,7 @@ struct LogoListView: View {
                 .foregroundColor(.white)
                 .overlay {
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(.cyan, lineWidth: 5)
+                        .stroke(Color.accentBlue, lineWidth: 5)
                 }
             Image(logo.logoName)
                 .resizable()
