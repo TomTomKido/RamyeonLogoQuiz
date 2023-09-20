@@ -13,18 +13,20 @@ struct LogoListView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(alignment: .leading) {
-                    LazyVGrid(columns: columns) {
-                        ForEach(logoList, id: \.self) { logo in
-                            NavigationLink {
-                                Text("hi")
-                            } label: {
-                                gridImage(logo: logo)
+            GeometryReader { parent in
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        LazyVGrid(columns: columns) {
+                            ForEach(logoList, id: \.self) { logo in
+                                NavigationLink {
+                                    GameView(logo: logo, parentSize: parent.size)
+                                } label: {
+                                    gridImage(logo: logo)
+                                }
                             }
                         }
+                        .padding()
                     }
-                    .padding()
                 }
             }
             .background(Color.blue)
@@ -36,16 +38,23 @@ struct LogoListView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 6)
                 .frame(width: 110, height: 110)
-                .foregroundColor(.cyan)
+                .foregroundColor(.white)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(.cyan, lineWidth: 5)
+                }
             Image(logo.logoName)
                 .resizable()
-                .frame(width: .infinity, height: 110)
+                .scaledToFill()
+                .frame(width: 110, height: 110)
+                .clipped()
             if logo.solved {
                 solvedCover
                 checkMark
                     .padding(EdgeInsets(top: 80, leading: 80, bottom: 10, trailing: 10))
             }
         }
+        .padding(3)
     }
     
     var solvedCover: some View {
