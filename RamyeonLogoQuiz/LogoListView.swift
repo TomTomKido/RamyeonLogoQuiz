@@ -46,7 +46,7 @@ struct LogoListView: View {
             Image(logo.logoName)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 110, height: 110)
+                .frame(width: 90, height: 90)
                 .clipped()
             if logo.solved {
                 solvedCover

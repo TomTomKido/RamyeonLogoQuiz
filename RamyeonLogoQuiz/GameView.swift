@@ -10,8 +10,12 @@ import SwiftUI
 struct GameView: View {
     var logo: Logo
     let parentSize: CGSize
-    let ratio: CGFloat = 2 / 3
     let blockSize: CGFloat = 50
+    
+    var imageBlockSize: CGFloat {
+        2 / 3 * parentSize.width
+    }
+    
     var answerBlockSize: CGFloat {
         let width = (parentSize.width - 20 - CGFloat(10 * logo.letterCount)) / CGFloat(logo.letterCount)
         return min(width, blockSize)
@@ -42,7 +46,7 @@ struct GameView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
                 .foregroundColor(.white)
-                .frame(width: parentSize.width * ratio, height: parentSize.width * ratio)
+                .frame(width: imageBlockSize, height: imageBlockSize)
                 .overlay {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.accentBlue, lineWidth: 10)
@@ -50,7 +54,7 @@ struct GameView: View {
             Image(logo.logoName)
                 .resizable()
                 .scaledToFill()
-                .frame(width: parentSize.width * ratio, height: parentSize.width * ratio)
+                .frame(width: imageBlockSize - 30, height: imageBlockSize - 30)
                 .clipped()
         }
     }
