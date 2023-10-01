@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct GameView: View {
-    var logo: Logo
+    @State var logo: Logo
     let parentSize: CGSize
     let blockSize: CGFloat = 50
+    
+    @EnvironmentObject var logoManager: LogoManager
     
     var imageBlockSize: CGFloat {
         2 / 3 * parentSize.width
@@ -23,32 +25,31 @@ struct GameView: View {
     @State var isAnimatingErrorView = false
     @State var revealedAnswers: [String] = []
     @State var targetLetterIndex: Int = 0
-    @State var isShowingPopup: Bool = true
 
     var body: some View {
         ZStack {
+            Rectangle()
+                .edgesIgnoringSafeArea(.all)
+                .foregroundColor(.darkBlue)
             VStack {
                 quizImage
                     .padding(.vertical, 20)
                 answerBlock
-                answerChoicesBlock
+                logo.solved ? AnyView(nextButton) : AnyView(answerChoicesBlock)
                 Spacer()
             }
-            .background(Color.darkBlue)
-            .overlay {
-                Rectangle()
-                    .foregroundColor(.red)
-                    .opacity(isAnimatingErrorView ? 0.3 : 0)
-                    .animation(.easeIn(duration: 0.1), value: isAnimatingErrorView)
-            }
-            if isShowingPopup {
-                successView
-            }
+        }
+        .overlay {
+            Rectangle()
+                .edgesIgnoringSafeArea(.all)
+                .foregroundColor(.red)
+                .opacity(isAnimatingErrorView ? 0.3 : 0)
+                .animation(.easeIn(duration: 0.1), value: isAnimatingErrorView)
         }
         .disabled(targetLetterIndex == logo.letterCount)
         .onChange(of: revealedAnswers.joined(), perform: { newValue in
             if newValue == logo.name {
-                isShowingPopup = true
+                logo.didSolve()
             }
         })
     }
@@ -67,6 +68,12 @@ struct GameView: View {
                 .scaledToFill()
                 .frame(width: imageBlockSize - 30, height: imageBlockSize - 30)
                 .clipped()
+            
+            if logo.solved {
+                Image("gameSuccessCover")
+                    .resizable()
+                    .frame(width: imageBlockSize, height: imageBlockSize)
+            }
         }
     }
     
@@ -103,40 +110,14 @@ struct GameView: View {
         }
     }
     
-    var successView: some View {
-        ZStack {
-            Color.black.opacity(0.2)
-                .edgesIgnoringSafeArea(.all)
-            
-            VStack {
-                Spacer()
-                Color.accentBlue.opacity(0.9)
-                    .frame(width: parentSize.width / 4 * 3, height: parentSize.width / 4 * 3 * 1.5)
-                    .cornerRadius(20)
-                    .shadow(radius: 20)
-                    .padding(.vertical)
-            }
-            
-            VStack {
-                Text("Success")
-                    .font(.title)
-                    .fontWeight(.medium)
-                    .foregroundColor(.white)
-                
-                HStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(.basicBlue)
-                        .frame(width: 80, height: 80)
-                    
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(.basicBlue)
-                        .frame(width: 80, height: 80)
-                    
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(.basicBlue)
-                        .frame(width: 80, height: 80)
-                }
-            }
+    var nextButton: some View {
+        Button {
+            print("next")
+        } label: {
+            Image("다음버튼")
+                .resizable()
+                .scaledToFit()
+                .frame(width: parentSize.width / 2)
         }
     }
     
@@ -167,6 +148,6 @@ struct GameView: View {
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {
-        GameView(logo: Logo(name: "꼬꼬면", answerChoices: ["면", "꼬", "삼", "개", "짜", "라" , "장", "선", "육", "꼬"]), parentSize: CGSize(width: 393, height: 852))
+        GameView(logo: Logo(name: "꼬꼬면", solved: true, answerChoices: ["면", "꼬", "삼", "개", "짜", "라" , "장", "선", "육", "꼬"]), parentSize: CGSize(width: 393, height: 852))
     }
 }

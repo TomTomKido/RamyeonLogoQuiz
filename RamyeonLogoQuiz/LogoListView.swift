@@ -20,6 +20,7 @@ struct LogoListView: View {
                             ForEach(logoManager.logoList, id: \.self) { logo in
                                 NavigationLink {
                                     GameView(logo: logo, parentSize: parent.size)
+                                        .environmentObject(logoManager)
                                 } label: {
                                     gridImage(logo: logo)
                                 }

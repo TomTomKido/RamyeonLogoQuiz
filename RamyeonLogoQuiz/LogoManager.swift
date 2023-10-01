@@ -7,7 +7,7 @@
 
 import Foundation
 
-class LogoManager {
+class LogoManager: ObservableObject {
     private lazy var answerPool: [String] = {
         var answerCharacters: [String] = []
         (bongjiPaldo + bongjiOttugi + bongjiNongshim).shuffled().forEach { name in
