@@ -112,6 +112,6 @@ struct GameView: View {
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {
-        GameView(logo: Logo(name: "꼬꼬면"), parentSize: CGSize(width: 393, height: 393))
+        GameView(logo: Logo(name: "꼬꼬면", answerChoices: ["면", "꼬", "삼", "개", "짜", "라" , "장", "선", "육", "꼬"]), parentSize: CGSize(width: 393, height: 393))
     }
 }
