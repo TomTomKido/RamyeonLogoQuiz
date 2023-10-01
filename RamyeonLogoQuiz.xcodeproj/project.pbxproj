@@ -16,6 +16,7 @@
 		D4D660862AA600CD00730B6D /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D660852AA600CD00730B6D /* MainView.swift */; };
 		D4D6608A2AA6078E00730B6D /* LogoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D660892AA6078E00730B6D /* LogoListView.swift */; };
 		D4D9691B2AC8606800FFA748 /* LogoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D9691A2AC8606800FFA748 /* LogoManager.swift */; };
+		D4D9691D2AC92E1800FFA748 /* SuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D9691C2AC92E1800FFA748 /* SuccessView.swift */; };
 		D4E144552AB81D9500EC93D7 /* Logo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E144542AB81D9500EC93D7 /* Logo.swift */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +31,7 @@
 		D4D660852AA600CD00730B6D /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		D4D660892AA6078E00730B6D /* LogoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoListView.swift; sourceTree = "<group>"; };
 		D4D9691A2AC8606800FFA748 /* LogoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoManager.swift; sourceTree = "<group>"; };
+		D4D9691C2AC92E1800FFA748 /* SuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessView.swift; sourceTree = "<group>"; };
 		D4E144542AB81D9500EC93D7 /* Logo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -68,6 +70,7 @@
 				D4D660852AA600CD00730B6D /* MainView.swift */,
 				D4D660892AA6078E00730B6D /* LogoListView.swift */,
 				D4B052DE2ABAA7B500BB1DE7 /* GameView.swift */,
+				D4D9691C2AC92E1800FFA748 /* SuccessView.swift */,
 				D4B052E22ABAB97300BB1DE7 /* Color+Extension.swift */,
 				D4E144542AB81D9500EC93D7 /* Logo.swift */,
 				D4D9691A2AC8606800FFA748 /* LogoManager.swift */,
@@ -159,6 +162,7 @@
 				D4E144552AB81D9500EC93D7 /* Logo.swift in Sources */,
 				D4D6608A2AA6078E00730B6D /* LogoListView.swift in Sources */,
 				D4B052E32ABAB97300BB1DE7 /* Color+Extension.swift in Sources */,
+				D4D9691D2AC92E1800FFA748 /* SuccessView.swift in Sources */,
 				D4D660862AA600CD00730B6D /* MainView.swift in Sources */,
 				D4B052DF2ABAA7B500BB1DE7 /* GameView.swift in Sources */,
 				D4D9691B2AC8606800FFA748 /* LogoManager.swift in Sources */,

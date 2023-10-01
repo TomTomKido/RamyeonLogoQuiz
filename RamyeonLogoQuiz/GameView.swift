@@ -23,23 +23,34 @@ struct GameView: View {
     @State var isAnimatingErrorView = false
     @State var revealedAnswers: [String] = []
     @State var targetLetterIndex: Int = 0
+    @State var isShowingPopup: Bool = true
 
     var body: some View {
-        VStack {
-            quizImage
-                .padding(.vertical, 20)
-            answerBlock
-            answerChoicesBlock
-            Spacer()
-        }
-        .background(Color.darkBlue)
-        .overlay {
-            Rectangle()
-                .foregroundColor(.red)
-                .opacity(isAnimatingErrorView ? 0.3 : 0)
-                .animation(.easeIn(duration: 0.1), value: isAnimatingErrorView)
+        ZStack {
+            VStack {
+                quizImage
+                    .padding(.vertical, 20)
+                answerBlock
+                answerChoicesBlock
+                Spacer()
+            }
+            .background(Color.darkBlue)
+            .overlay {
+                Rectangle()
+                    .foregroundColor(.red)
+                    .opacity(isAnimatingErrorView ? 0.3 : 0)
+                    .animation(.easeIn(duration: 0.1), value: isAnimatingErrorView)
+            }
+            if isShowingPopup {
+                successView
+            }
         }
         .disabled(targetLetterIndex == logo.letterCount)
+        .onChange(of: revealedAnswers.joined(), perform: { newValue in
+            if newValue == logo.name {
+                isShowingPopup = true
+            }
+        })
     }
     
     var quizImage: some View {
@@ -92,8 +103,44 @@ struct GameView: View {
         }
     }
     
+    var successView: some View {
+        ZStack {
+            Color.black.opacity(0.2)
+                .edgesIgnoringSafeArea(.all)
+            
+            VStack {
+                Spacer()
+                Color.accentBlue.opacity(0.9)
+                    .frame(width: parentSize.width / 4 * 3, height: parentSize.width / 4 * 3 * 1.5)
+                    .cornerRadius(20)
+                    .shadow(radius: 20)
+                    .padding(.vertical)
+            }
+            
+            VStack {
+                Text("Success")
+                    .font(.title)
+                    .fontWeight(.medium)
+                    .foregroundColor(.white)
+                
+                HStack {
+                    RoundedRectangle(cornerRadius: 5)
+                        .foregroundColor(.basicBlue)
+                        .frame(width: 80, height: 80)
+                    
+                    RoundedRectangle(cornerRadius: 5)
+                        .foregroundColor(.basicBlue)
+                        .frame(width: 80, height: 80)
+                    
+                    RoundedRectangle(cornerRadius: 5)
+                        .foregroundColor(.basicBlue)
+                        .frame(width: 80, height: 80)
+                }
+            }
+        }
+    }
+    
     func answerChoiceTapped(choice: String) {
-        print(targetLetterIndex, logo.letterCount)
         if targetLetterIndex < logo.letterCount {
             checkAnswer(choice: choice)
         } else {
@@ -120,6 +167,6 @@ struct GameView: View {
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {
-        GameView(logo: Logo(name: "꼬꼬면", answerChoices: ["면", "꼬", "삼", "개", "짜", "라" , "장", "선", "육", "꼬"]), parentSize: CGSize(width: 393, height: 393))
+        GameView(logo: Logo(name: "꼬꼬면", answerChoices: ["면", "꼬", "삼", "개", "짜", "라" , "장", "선", "육", "꼬"]), parentSize: CGSize(width: 393, height: 852))
     }
 }
