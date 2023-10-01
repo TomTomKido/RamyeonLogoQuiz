@@ -12,13 +12,14 @@ struct GameView: View {
     let parentSize: CGSize
     let ratio: CGFloat = 2 / 3
     let blockSize: CGFloat = 50
+    @State var revealedAnswers: [String] = []
 
     var body: some View {
         VStack {
             quizImage
                 .padding(.vertical, 20)
             answerBlock
-            lettersBlock
+            answerChoicesBlock
             Spacer()
         }
         .background(Color.darkBlue)
@@ -42,21 +43,27 @@ struct GameView: View {
     }
     
     var answerBlock: some View {
-        LazyHGrid(rows: [.init(.fixed(blockSize))]) {
-            ForEach(0..<logo.letterCount, id: \.self) { _ in
-                RoundedRectangle(cornerRadius: 5)
-                    .frame(width: blockSize, height: blockSize)
-                    .foregroundColor(.lightGray)
+        LazyHGrid(rows: Array(repeating: .init(.adaptive(minimum: blockSize)), count: 2)) {
+            ForEach(0..<logo.letterCount, id: \.self) { index in
+                ZStack {
+                    RoundedRectangle(cornerRadius: 5)
+                        .frame(width: blockSize, height: blockSize)
+                        .foregroundColor(.lightGray)
+                    Text(revealedAnswers.count > index ? revealedAnswers[index] : "")
+                }
             }
         }
     }
     
-    var lettersBlock: some View {
+    var answerChoicesBlock: some View {
         LazyVGrid(columns: Array(repeating: .init(.fixed(blockSize)), count: 5)) {
-            ForEach(0..<10) { _ in
-                RoundedRectangle(cornerRadius: 5)
-                    .frame(width: blockSize, height: blockSize)
-                    .foregroundColor(.white)
+            ForEach(0..<10) { index in
+                ZStack {
+                    RoundedRectangle(cornerRadius: 5)
+                        .frame(width: blockSize, height: blockSize)
+                        .foregroundColor(.white)
+                    Text(logo.answerChoices[index])
+                }
             }
         }
     }
