@@ -12,7 +12,9 @@ struct GameView: View {
     let parentSize: CGSize
     let ratio: CGFloat = 2 / 3
     let blockSize: CGFloat = 50
+    @State var isAnimatingErrorView = false
     @State var revealedAnswers: [String] = []
+    @State var targetLetterIndex: Int = 0
 
     var body: some View {
         VStack {
@@ -23,6 +25,13 @@ struct GameView: View {
             Spacer()
         }
         .background(Color.darkBlue)
+        .overlay {
+            Rectangle()
+                .foregroundColor(.red)
+                .opacity(isAnimatingErrorView ? 0.3 : 0)
+                .animation(.easeIn(duration: 0.1), value: isAnimatingErrorView)
+        }
+        .disabled(targetLetterIndex == logo.letterCount)
     }
     
     var quizImage: some View {
@@ -51,6 +60,10 @@ struct GameView: View {
                         .foregroundColor(.lightGray)
                     Text(revealedAnswers.count > index ? revealedAnswers[index] : "")
                 }
+                .onTapGesture {
+                    revealedAnswers.remove(at: index)
+                    targetLetterIndex -= 1
+                }
             }
         }
     }
@@ -64,7 +77,35 @@ struct GameView: View {
                         .foregroundColor(.white)
                     Text(logo.answerChoices[index])
                 }
+                .onTapGesture {
+                    answerChoiceTapped(choice: logo.answerChoices[index])
+                }
             }
+        }
+    }
+    
+    func answerChoiceTapped(choice: String) {
+        print(targetLetterIndex, logo.letterCount)
+        if targetLetterIndex < logo.letterCount {
+            checkAnswer(choice: choice)
+        } else {
+            showWrongAnswerWarning()
+        }
+    }
+    
+    func checkAnswer(choice: String) {
+        if logo.letters[targetLetterIndex] == choice {
+            revealedAnswers.append(choice)
+            targetLetterIndex += 1
+        } else {
+            showWrongAnswerWarning()
+        }
+    }
+    
+    func showWrongAnswerWarning() {
+        isAnimatingErrorView = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            isAnimatingErrorView = false
         }
     }
 }
