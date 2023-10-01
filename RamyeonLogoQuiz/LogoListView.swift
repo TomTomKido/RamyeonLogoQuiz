@@ -7,56 +7,61 @@
 
 import SwiftUI
 
-struct Logo: Hashable {
-    private let beforeName: String
-    private let afterName: String
-    var solved: Bool
-    
-    init(name: String, solved: Bool = false) {
-        self.beforeName = "\(name)_before"
-        self.afterName = "\(name)_after"
-        self.solved = solved
-    }
-    
-    var logoName: String {
-        solved ? afterName : beforeName
-    }
-}
-
 struct LogoListView: View {
-    let logoList: [Logo] = [Logo(name: "sony")]
+    let logoManager = LogoManager()
+    let columns = Array(repeating: GridItem(.flexible(minimum: 100, maximum: 150)), count: 3)
     
     var body: some View {
-        ZStack {
-            Rectangle()
-                .foregroundColor(.blue)
-            VStack {
-                LazyVGrid(columns: [GridItem(.flexible(minimum: 100, maximum: 150))]) {
-                    ForEach(logoList, id: \.self) { logo in
-                        ZStack {
-                            Image(logo.logoName)
-                                .resizable()
-                                .frame(width:100, height: 100)
-                            solvedCover
-                            checkMark
-                                .padding(EdgeInsets(top: 80, leading: 80, bottom: 10, trailing: 10))
+        NavigationView {
+            GeometryReader { parent in
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        LazyVGrid(columns: columns) {
+                            ForEach(logoManager.logoList, id: \.self) { logo in
+                                NavigationLink {
+                                    GameView(logo: logo, parentSize: parent.size)
+                                } label: {
+                                    gridImage(logo: logo)
+                                }
+                            }
                         }
+                        .padding()
                     }
                 }
-                .padding()
-                Spacer()
+            }
+            .background(Color.darkBlue)
+        }
+        .navigationTitle("라면 퀴즈")
+    }
+    
+    func gridImage(logo: Logo) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 6)
+                .frame(width: 110, height: 110)
+                .foregroundColor(.white)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.accentBlue, lineWidth: 5)
+                }
+            Image(logo.logoName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 90, height: 90)
+                .clipped()
+            if logo.solved {
+                solvedCover
+                checkMark
+                    .padding(EdgeInsets(top: 80, leading: 80, bottom: 10, trailing: 10))
             }
         }
+        .padding(3)
     }
     
     var solvedCover: some View {
         Image("solvedCover")
             .resizable()
-            .frame(width: 110, height: 110)
+            .frame(width: 100, height: 100)
             .opacity(0.5)
-            .border(.white, width: 5)
-            .cornerRadius(6)
-            
     }
     
     var checkMark: some View {
