@@ -29,7 +29,7 @@ struct LogoListView: View {
                     }
                 }
             }
-            .background(Color.basicBlue)
+            .background(Color.darkBlue)
         }
         .navigationTitle("라면 퀴즈")
     }
