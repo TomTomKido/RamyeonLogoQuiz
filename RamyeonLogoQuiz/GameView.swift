@@ -12,6 +12,10 @@ struct GameView: View {
     let parentSize: CGSize
     let ratio: CGFloat = 2 / 3
     let blockSize: CGFloat = 50
+    var answerBlockSize: CGFloat {
+        let width = (parentSize.width - 20 - CGFloat(10 * logo.letterCount)) / CGFloat(logo.letterCount)
+        return min(width, blockSize)
+    }
     @State var isAnimatingErrorView = false
     @State var revealedAnswers: [String] = []
     @State var targetLetterIndex: Int = 0
@@ -52,11 +56,11 @@ struct GameView: View {
     }
     
     var answerBlock: some View {
-        LazyHGrid(rows: Array(repeating: .init(.adaptive(minimum: blockSize)), count: 2)) {
+        LazyHGrid(rows: [.init(.fixed(answerBlockSize))]) {
             ForEach(0..<logo.letterCount, id: \.self) { index in
                 ZStack {
                     RoundedRectangle(cornerRadius: 5)
-                        .frame(width: blockSize, height: blockSize)
+                        .frame(width: answerBlockSize, height: answerBlockSize)
                         .foregroundColor(.lightGray)
                     Text(revealedAnswers.count > index ? revealedAnswers[index] : "")
                 }
