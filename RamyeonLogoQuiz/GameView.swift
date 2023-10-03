@@ -9,7 +9,7 @@ import SwiftUI
 
 struct GameView: View {
     @ObservedObject var logoManager: LogoManager
-    @State var isAnimatingErrorView = false
+    @Environment(\.presentationMode) var presentationMode
     
     let parentSize: CGSize
     let blockSize: CGFloat = 50
@@ -26,13 +26,13 @@ struct GameView: View {
     var body: some View {
         ZStack {
             Rectangle()
-                .edgesIgnoringSafeArea(.all)
+                .ignoresSafeArea(.all)
                 .foregroundColor(.darkBlue)
             VStack(alignment: .center) {
                 Rectangle()
                     .ignoresSafeArea(.all)
                     .foregroundColor(.basicBlue)
-                    .frame(height: 50)
+                    .frame(height: 20)
                 Spacer(minLength: 30)
                 quizImage
                 answerBlock
@@ -58,14 +58,14 @@ struct GameView: View {
                 .frame(height: 70)
             }
         }
-        .overlay {
-            Rectangle()
-                .edgesIgnoringSafeArea(.all)
-                .foregroundColor(.red)
-                .opacity(isAnimatingErrorView ? 0.3 : 0)
-                .animation(.easeIn(duration: 0.1), value: isAnimatingErrorView)
-        }
-//        .disabled(targetLetterIndex == logo.letterCount)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: Button(action: {
+            self.presentationMode.wrappedValue.dismiss()
+        }) {
+            Image("백버튼")
+                .resizable()
+                .frame(width: 40, height: 40)
+        })
     }
     
     var quizImage: some View {
@@ -107,7 +107,7 @@ struct GameView: View {
                 .onTapGesture {
                     logoManager.removeAnswerLetter(at: index)
                 }
-                .disabled(logoManager.isSolvedAnswerLetter(at: index))
+//                .disabled(logoManager.isSolvedAnswerLetter(at: index))
             }
         }
     }
@@ -125,9 +125,10 @@ struct GameView: View {
                 .onTapGesture {
                     logoManager.tryAnswerChoice(at: index)
                 }
-                .disabled(logoManager.isSolvedChoiceLetter(at: index))
+                .disabled(logoManager.shouldDisableChoiceLetter(at: index))
             }
         }
+        .frame(maxHeight: 120)
     }
     
     func bottomButton(name: String, action: @escaping () -> Void) -> some View {
@@ -138,6 +139,7 @@ struct GameView: View {
                 .resizable()
                 .frame(width: 70, height: 70)
         }
+        .disabled(logoManager.logo.solved)
     }
     
     var nextButton: some View {
@@ -149,36 +151,7 @@ struct GameView: View {
                 .scaledToFit()
                 .frame(width: parentSize.width / 2)
         }
-    }
-    
-    func answerChoiceTapped(index: Int) {
-        logoManager.answerChoiceLetter(at: index)
-        
-        
-//        if targetLetterIndex < logo.letterCount {
-//            checkAnswer(index: index)
-//        } else {
-//            showWrongAnswerWarning(index: index)
-//        }
-    }
-    
-    func checkAnswer(index: Int) {
-//        if logo.letters[targetLetterIndex] == logo.answerChoices[index] {
-//            revealedAnswers.append(logo.answerChoices[index])
-//            answerManager.reveal(index: targetLetterIndex)
-//            targetLetterIndex += 1
-//            answerManager.rightAnswerTapped(index: index)
-//        } else {
-//            showWrongAnswerWarning(index: index)
-//        }
-    }
-    
-    func showWrongAnswerWarning(index: Int) {
-//        answerManager.wrongAnswerTapped(index: index)
-        isAnimatingErrorView = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            isAnimatingErrorView = false
-        }
+        .frame(maxHeight: 120)
     }
 }
 

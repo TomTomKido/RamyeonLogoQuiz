@@ -28,9 +28,9 @@ class LogoListManager: ObservableObject {
         initializeLogoList()
     }
     
-    func updateLogo(logo: Logo) {
-        let index = logoIndex(for: logo.name)
-        logoList[index] = Logo(name: logo.name, solved: true, answerChoices: logo.answerChoices)
+    func updateLogo(newLogo: Logo) {
+        let index = logoIndex(for: newLogo.name)
+        logoList[index] = newLogo
     }
     
     private func logoIndex(for targetName: String) -> Int {
