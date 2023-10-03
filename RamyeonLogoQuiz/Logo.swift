@@ -9,8 +9,8 @@ import Foundation
 
 struct Logo: Hashable {
     let name: String
-    private(set) var solved: Bool
-    private(set) var answerChoices: [String]
+    let solved: Bool
+    let answerChoices: [String]
     
     init(name: String, solved: Bool = false, answerChoices: [String]) {
         self.name = name
@@ -39,8 +39,12 @@ struct Logo: Hashable {
             String($0)
         }
     }
-    
-    mutating func didSolve() {
-        solved = true
+}
+
+extension Logo {
+    init() {
+        name = ""
+        solved = false
+        answerChoices = []
     }
 }

@@ -2,45 +2,197 @@
 //  LogoManager.swift
 //  RamyeonLogoQuiz
 //
-//  Created by JeongAh Hong on 2023/09/30.
+//  Created by JeongAh Hong on 2023/10/02.
 //
 
-import Foundation
+import Combine
 
 class LogoManager: ObservableObject {
-    private lazy var answerPool: [String] = {
-        var answerCharacters: [String] = []
-        (bongjiPaldo + bongjiOttugi + bongjiNongshim).shuffled().forEach { name in
-            name.forEach { char in answerCharacters.append(String(char)) }
-        }
-        return answerCharacters
-    }()
-
-    lazy var logoList: [Logo] = {
-        (bongjiPaldo + bongjiOttugi + bongjiNongshim).map {
-            Logo(name: $0, answerChoices: getAnswerChoices(name: $0))
-        }
-    }()
-
-    private let bongjiPaldo: [String] = ["꼬꼬면", "남자라면", "비빔면레몬", "왕뚜껑", "일품삼선짜장", "일품해물라면", "틈새라면", "틈새라면고기짬뽕", "틈새라면매운김치", "틈새라면매운짜장", "틈새라면매운카레", "팔도비빔면", "팔도비빔면매운맛", "팔도비빔쫄면", "팔도짜장면"]
-
-    private let bongjiOttugi: [String] = ["냉모밀", "북엇국라면", "열라면", "오!라면", "오동통면", "진라면매운맛", "진라면순한맛", "진진짜라", "참깨라면", "해물짬뽕"]
-
-    private let  bongjiNongshim: [String] = ["감자면", "둥지냉면동치미물냉면", "둥지냉면비빔냉면", "멸치칼국수", "무파타탕면", "배홍동비빔면", "보글보글부대찌개면", "볶음너구리", "사리곰탕면", "사천백짬뽕", "사천짜파게티", "순한너구리", "시원한메밀소바", "신라면", "신라면건면", "신라면더레드", "신라면블랙", "신라면블랙두부김치", "안성탕면", "앵그리너구리", "앵그리짜파구리", "야채라면", "얼큰한너구리", "오징어짬뽕", "육개장라면", "장칼국수", "짜왕건면", "짜파게티", "찰비빔면", "튀김우동면", "해물안성탕면", "후루룩국수", "후루룩칼국수"]
+    weak var delegate: LogoListManager?
+    private(set) var logo: Logo
+    private var answerChoiceLetters: [ChoiceLetter]
+    @Published var answerTrialLetters: [TrialLetter]
+    private var subscriptions = Set<AnyCancellable>()
+    private var currentIndex: Int = 0
     
-    
-    private func getAnswerChoices(name: String) -> [String] {
-        var answerChoices: [String] = name.compactMap { String($0) }
-        var index = 0
+    init(logo: Logo, delegate: LogoListManager) {
+        self.logo = logo
+        self.answerChoiceLetters = logo.answerChoices.map { ChoiceLetter(letter: $0, status: .unsolved, answerIndex: -1) }
+        self.answerTrialLetters = Array(repeating: TrialLetter(), count: logo.letterCount)
+        self.delegate = delegate
         
-        repeat {
-            let currentChar = String(answerPool[index])
-            if !answerChoices.contains(currentChar) {
-                answerChoices.append(currentChar)
+        logo.name.enumerated().forEach { [weak self] (index, letter) in
+            if let targetIndex = self?.answerChoiceLetters.firstIndex(where: { $0.letter == String(letter) && $0.answerIndex == -1 }) {
+                self?.answerChoiceLetters[targetIndex].initialize(answerIndex: index)
             }
-            index += 1
-        } while answerChoices.count < 10
+        }
+
+//        $revealedAnswers
+//            .sink { [weak self] answers in
+//                guard let self else { return }
+//                if answers.joined() == self.logo.name {
+//                    self.delegate?.updateLogo(logo: self.logo)
+//                }
+//            }
+//            .store(in: &subscriptions)
+    }
+    
+    private func choice(at answerIndex: Int) -> ChoiceLetter {
+        let choice = answerChoiceLetters.first(where: { $0.answerIndex == answerIndex })
+        return choice ?? ChoiceLetter()
+    }
+    
+    private func choiceIndex(at answerIndex: Int) -> Int? {
+        return answerChoiceLetters.firstIndex(where: { $0.answerIndex == answerIndex })
+    }
+    
+    // answer
+    
+    func answerBackground(at answerIndex: Int) -> String {
+        choice(at: answerIndex).status.answerBackgroundName
+    }
+    
+    func answerLetter(at answerIndex: Int) -> String {
+        choice(at: answerIndex).letter
+    }
+    
+    // trial
+    
+    func answerTrialBackground(at answerIndex: Int) -> String {
+        answerTrialLetters[answerIndex].backgroundName
+    }
+    
+    func answerTrialLetter(at answerIndex: Int) -> String {
+        answerTrialLetters[answerIndex].letter
+    }
+    
+    // choice
+    
+    func answerChoiceBackground(at choiceIndex: Int) -> String {
+        answerChoiceLetters[choiceIndex].status.backgroundName
+    }
+    
+    func answerChoiceLetter(at choiceIndex: Int) -> String {
+        answerChoiceLetters[choiceIndex].letter
+    }
+    
+    // block tapped
+    
+    func removeAnswerLetter(at answerIndex: Int) {
+        answerTrialLetters[answerIndex].letter = ""
+        updateCurrentIndex()
+    }
+    
+    func tryAnswerChoice(at choiceIndex: Int) {
+        guard currentIndex < answerTrialLetters.count else { return }
+        let choiceLetter = answerChoiceLetter(at: choiceIndex)
+        answerTrialLetters[currentIndex].letter = choiceLetter
+        updateCurrentIndex()
+    }
+    
+    private func updateCurrentIndex() {
+        if currentIndex == answerTrialLetters.count - 1 {
+            currentIndex += 1
+            checkAnswer()
+        } else {
+            currentIndex = answerTrialLetters.firstIndex(where: { $0.letter == "" }) ?? currentIndex
+        }
+    }
+    
+    // disable block
+    
+    func isSolvedChoiceLetter(at choiceIndex: Int) -> Bool {
+        answerChoiceLetters[choiceIndex].status == .correct
+    }
+    
+    func isSolvedAnswerLetter(at answerIndex: Int) -> Bool {
+        choice(at: answerIndex).status == .correct
+    }
+    
+    // bottom Buttons
+    
+    func xButtonTapped() {
+        guard currentIndex != 0 else { return }
+        guard let lastIndex = answerTrialLetters.lastIndex(where: { $0.revealed == false && $0.letter != "" }) else { return }
+        currentIndex = lastIndex
+        answerTrialLetters[lastIndex].letter = ""
+    }
+    
+    func retryButtonTapped() {
+        (0..<answerTrialLetters.count).forEach { index in
+            if !answerTrialLetters[index].revealed {
+                answerTrialLetters[index].letter = ""
+            }
+        }
         
-        return answerChoices.shuffled()
+        updateCurrentIndex()
+    }
+    
+    func checkAnswer() {
+        
+    }
+    
+    
+}
+
+struct TrialLetter {
+    var letter: String
+    var revealed: Bool
+    var backgroundName: String {
+        revealed ? "정답배경" : "기본배경"
+    }
+}
+
+extension TrialLetter {
+    init() {
+        self.letter = ""
+        self.revealed = false
+    }
+}
+
+struct ChoiceLetter {
+    let letter: String
+    var status: RevealStatus
+    var answerIndex: Int
+    
+    enum RevealStatus {
+        case unsolved
+        case wrong
+        case correct
+        case halfCorrect
+        
+        var backgroundName: String {
+            switch self {
+            case .unsolved:
+                return "기본배경"
+            case .wrong:
+                return "오답배경"
+            case .correct:
+                return "정답배경"
+            case .halfCorrect:
+                return "노란배경"
+            }
+        }
+        
+        var answerBackgroundName: String {
+            switch self {
+            case .correct:
+                return "정답배경"
+            default:
+                return "기본배경"
+            }
+        }
+    }
+    
+    mutating func initialize(answerIndex: Int) {
+        self.answerIndex = answerIndex
+    }
+}
+
+extension ChoiceLetter {
+    init() {
+        self.letter = ""
+        self.status = .unsolved
+        self.answerIndex = -1
     }
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LogoListView: View {
-    let logoManager = LogoManager()
+    @StateObject var logoListManager = LogoListManager()
     let columns = Array(repeating: GridItem(.flexible(minimum: 100, maximum: 150)), count: 3)
     
     var body: some View {
@@ -17,10 +17,9 @@ struct LogoListView: View {
                 ScrollView {
                     VStack(alignment: .leading) {
                         LazyVGrid(columns: columns) {
-                            ForEach(logoManager.logoList, id: \.self) { logo in
+                            ForEach(logoListManager.logoList, id: \.self) { logo in
                                 NavigationLink {
-                                    GameView(logo: logo, parentSize: parent.size)
-                                        .environmentObject(logoManager)
+                                    GameView(logoManager: LogoManager(logo: logo, delegate: logoListManager), parentSize: parent.size)
                                 } label: {
                                     gridImage(logo: logo)
                                 }

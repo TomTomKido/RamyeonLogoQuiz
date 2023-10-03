@@ -8,35 +8,54 @@
 import SwiftUI
 
 struct GameView: View {
-    @State var logo: Logo
+    @ObservedObject var logoManager: LogoManager
+    @State var isAnimatingErrorView = false
+    
     let parentSize: CGSize
     let blockSize: CGFloat = 50
-    
-    @EnvironmentObject var logoManager: LogoManager
     
     var imageBlockSize: CGFloat {
         2 / 3 * parentSize.width
     }
     
     var answerBlockSize: CGFloat {
-        let width = (parentSize.width - 20 - CGFloat(10 * logo.letterCount)) / CGFloat(logo.letterCount)
+        let width = (parentSize.width - 20 - CGFloat(10 * logoManager.logo.letterCount)) / CGFloat(logoManager.logo.letterCount)
         return min(width, blockSize)
     }
-    @State var isAnimatingErrorView = false
-    @State var revealedAnswers: [String] = []
-    @State var targetLetterIndex: Int = 0
 
     var body: some View {
         ZStack {
             Rectangle()
                 .edgesIgnoringSafeArea(.all)
                 .foregroundColor(.darkBlue)
-            VStack {
+            VStack(alignment: .center) {
+                Rectangle()
+                    .ignoresSafeArea(.all)
+                    .foregroundColor(.basicBlue)
+                    .frame(height: 50)
+                Spacer(minLength: 30)
                 quizImage
-                    .padding(.vertical, 20)
                 answerBlock
-                logo.solved ? AnyView(nextButton) : AnyView(answerChoicesBlock)
-                Spacer()
+                logoManager.logo.solved ? AnyView(nextButton) : AnyView(answerChoicesBlock)
+                Spacer(minLength: 70)
+                ZStack {
+                    Rectangle()
+                        .edgesIgnoringSafeArea(.all)
+                        .foregroundColor(.basicBlue)
+                    HStack {
+                        Spacer()
+                        bottomButton(name: "x_button") {
+                            logoManager.xButtonTapped()
+                        }
+                        Spacer()
+                        bottomButton(name: "retry_button") {
+                            logoManager.retryButtonTapped()
+                        }
+                        Spacer()
+                    }
+                    .padding(20)
+                }
+                .frame(height: 70)
             }
         }
         .overlay {
@@ -46,12 +65,7 @@ struct GameView: View {
                 .opacity(isAnimatingErrorView ? 0.3 : 0)
                 .animation(.easeIn(duration: 0.1), value: isAnimatingErrorView)
         }
-        .disabled(targetLetterIndex == logo.letterCount)
-        .onChange(of: revealedAnswers.joined(), perform: { newValue in
-            if newValue == logo.name {
-                logo.didSolve()
-            }
-        })
+//        .disabled(targetLetterIndex == logo.letterCount)
     }
     
     var quizImage: some View {
@@ -63,33 +77,37 @@ struct GameView: View {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.accentBlue, lineWidth: 10)
                 }
-            Image(logo.logoName)
+            Image(logoManager.logo.logoName)
                 .resizable()
                 .scaledToFill()
                 .frame(width: imageBlockSize - 30, height: imageBlockSize - 30)
                 .clipped()
             
-            if logo.solved {
+            if logoManager.logo.solved {
                 Image("gameSuccessCover")
                     .resizable()
                     .frame(width: imageBlockSize, height: imageBlockSize)
+                    .opacity(0.5)
             }
         }
     }
     
     var answerBlock: some View {
         LazyHGrid(rows: [.init(.fixed(answerBlockSize))]) {
-            ForEach(0..<logo.letterCount, id: \.self) { index in
+            ForEach(0..<logoManager.logo.letterCount, id: \.self) { index in
                 ZStack {
-                    RoundedRectangle(cornerRadius: 5)
+                    Image(logoManager.answerTrialBackground(at: index))
+                        .resizable()
                         .frame(width: answerBlockSize, height: answerBlockSize)
-                        .foregroundColor(.lightGray)
-                    Text(revealedAnswers.count > index ? revealedAnswers[index] : "")
+                    Text(logoManager.answerTrialLetter(at: index))
+                        .font(.title2)
+                        .foregroundColor(logoManager.isSolvedAnswerLetter(at: index) ? .white : .black)
+                        .fontWeight(.medium)
                 }
                 .onTapGesture {
-                    revealedAnswers.remove(at: index)
-                    targetLetterIndex -= 1
+                    logoManager.removeAnswerLetter(at: index)
                 }
+                .disabled(logoManager.isSolvedAnswerLetter(at: index))
             }
         }
     }
@@ -98,15 +116,27 @@ struct GameView: View {
         LazyVGrid(columns: Array(repeating: .init(.fixed(blockSize)), count: 5)) {
             ForEach(0..<10) { index in
                 ZStack {
-                    RoundedRectangle(cornerRadius: 5)
+                    Image(logoManager.answerChoiceBackground(at: index))
+                        .resizable()
                         .frame(width: blockSize, height: blockSize)
-                        .foregroundColor(.white)
-                    Text(logo.answerChoices[index])
+                    Text(logoManager.answerChoiceLetter(at: index))
+                        .font(.title2)
                 }
                 .onTapGesture {
-                    answerChoiceTapped(choice: logo.answerChoices[index])
+                    logoManager.tryAnswerChoice(at: index)
                 }
+                .disabled(logoManager.isSolvedChoiceLetter(at: index))
             }
+        }
+    }
+    
+    func bottomButton(name: String, action: @escaping () -> Void) -> some View {
+        Button {
+            action()
+        } label: {
+            Image(name)
+                .resizable()
+                .frame(width: 70, height: 70)
         }
     }
     
@@ -121,24 +151,30 @@ struct GameView: View {
         }
     }
     
-    func answerChoiceTapped(choice: String) {
-        if targetLetterIndex < logo.letterCount {
-            checkAnswer(choice: choice)
-        } else {
-            showWrongAnswerWarning()
-        }
+    func answerChoiceTapped(index: Int) {
+        logoManager.answerChoiceLetter(at: index)
+        
+        
+//        if targetLetterIndex < logo.letterCount {
+//            checkAnswer(index: index)
+//        } else {
+//            showWrongAnswerWarning(index: index)
+//        }
     }
     
-    func checkAnswer(choice: String) {
-        if logo.letters[targetLetterIndex] == choice {
-            revealedAnswers.append(choice)
-            targetLetterIndex += 1
-        } else {
-            showWrongAnswerWarning()
-        }
+    func checkAnswer(index: Int) {
+//        if logo.letters[targetLetterIndex] == logo.answerChoices[index] {
+//            revealedAnswers.append(logo.answerChoices[index])
+//            answerManager.reveal(index: targetLetterIndex)
+//            targetLetterIndex += 1
+//            answerManager.rightAnswerTapped(index: index)
+//        } else {
+//            showWrongAnswerWarning(index: index)
+//        }
     }
     
-    func showWrongAnswerWarning() {
+    func showWrongAnswerWarning(index: Int) {
+//        answerManager.wrongAnswerTapped(index: index)
         isAnimatingErrorView = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             isAnimatingErrorView = false
@@ -148,6 +184,6 @@ struct GameView: View {
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {
-        GameView(logo: Logo(name: "꼬꼬면", solved: true, answerChoices: ["면", "꼬", "삼", "개", "짜", "라" , "장", "선", "육", "꼬"]), parentSize: CGSize(width: 393, height: 852))
+        GameView(logoManager: LogoManager(logo: Logo(name: "오동통면", solved: false, answerChoices: ["면", "꼬", "삼", "개", "짜", "라" , "장", "선", "육", "꼬"]), delegate: LogoListManager()) , parentSize: CGSize(width: 393, height: 852))
     }
 }
