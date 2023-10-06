@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct GameView: View {
-    @ObservedObject var logoManager: LogoManager
+    @ObservedObject var gameManager: GameManager
     @Environment(\.presentationMode) var presentationMode
-    
     let parentSize: CGSize
+    @Binding var trigger: Bool
     let blockSize: CGFloat = 50
     
     var imageBlockSize: CGFloat {
@@ -19,7 +19,7 @@ struct GameView: View {
     }
     
     var answerBlockSize: CGFloat {
-        let width = (parentSize.width - 20 - CGFloat(10 * logoManager.logo.letterCount)) / CGFloat(logoManager.logo.letterCount)
+        let width = (parentSize.width - 20 - CGFloat(10 * gameManager.logo.letterCount)) / CGFloat(gameManager.logo.letterCount)
         return min(width, blockSize)
     }
 
@@ -36,7 +36,7 @@ struct GameView: View {
                 Spacer(minLength: 30)
                 quizImage
                 answerBlock
-                logoManager.logo.solved ? AnyView(nextButton) : AnyView(answerChoicesBlock)
+                gameManager.solved ? AnyView(nextButton) : AnyView(answerChoicesBlock)
                 Spacer(minLength: 70)
                 ZStack {
                     Rectangle()
@@ -45,11 +45,11 @@ struct GameView: View {
                     HStack {
                         Spacer()
                         bottomButton(name: "x_button") {
-                            logoManager.xButtonTapped()
+                            gameManager.xButtonTapped()
                         }
                         Spacer()
                         bottomButton(name: "retry_button") {
-                            logoManager.retryButtonTapped()
+                            gameManager.retryButtonTapped()
                         }
                         Spacer()
                     }
@@ -60,6 +60,8 @@ struct GameView: View {
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: Button(action: {
+            gameManager.reset()
+            trigger = true
             self.presentationMode.wrappedValue.dismiss()
         }) {
             Image("백버튼")
@@ -77,13 +79,13 @@ struct GameView: View {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.accentBlue, lineWidth: 10)
                 }
-            Image(logoManager.logo.logoName)
+            Image(gameManager.logo.logoName)
                 .resizable()
                 .scaledToFill()
                 .frame(width: imageBlockSize - 30, height: imageBlockSize - 30)
                 .clipped()
             
-            if logoManager.logo.solved {
+            if gameManager.solved {
                 Image("gameSuccessCover")
                     .resizable()
                     .frame(width: imageBlockSize, height: imageBlockSize)
@@ -94,18 +96,18 @@ struct GameView: View {
     
     var answerBlock: some View {
         LazyHGrid(rows: [.init(.fixed(answerBlockSize))]) {
-            ForEach(0..<logoManager.logo.letterCount, id: \.self) { index in
+            ForEach(0..<gameManager.logo.letterCount, id: \.self) { index in
                 ZStack {
-                    Image(logoManager.answerTrialBackground(at: index))
+                    Image(gameManager.answerTrialBackground(at: index))
                         .resizable()
                         .frame(width: answerBlockSize, height: answerBlockSize)
-                    Text(logoManager.answerTrialLetter(at: index))
+                    Text(gameManager.answerTrialLetter(at: index))
                         .font(.title2)
-                        .foregroundColor(logoManager.isSolvedAnswerLetter(at: index) ? .white : .black)
+                        .foregroundColor(gameManager.isSolvedAnswerLetter(at: index) ? .white : .black)
                         .fontWeight(.medium)
                 }
                 .onTapGesture {
-                    logoManager.removeAnswerLetter(at: index)
+                    gameManager.removeAnswerLetter(at: index)
                 }
 //                .disabled(logoManager.isSolvedAnswerLetter(at: index))
             }
@@ -116,16 +118,16 @@ struct GameView: View {
         LazyVGrid(columns: Array(repeating: .init(.fixed(blockSize)), count: 5)) {
             ForEach(0..<10) { index in
                 ZStack {
-                    Image(logoManager.answerChoiceBackground(at: index))
+                    Image(gameManager.answerChoiceBackground(at: index))
                         .resizable()
                         .frame(width: blockSize, height: blockSize)
-                    Text(logoManager.answerChoiceLetter(at: index))
+                    Text(gameManager.answerChoiceLetter(at: index))
                         .font(.title2)
                 }
                 .onTapGesture {
-                    logoManager.tryAnswerChoice(at: index)
+                    gameManager.tryAnswerChoice(at: index)
                 }
-                .disabled(logoManager.shouldDisableChoiceLetter(at: index))
+                .disabled(gameManager.shouldDisableChoiceLetter(at: index))
             }
         }
         .frame(maxHeight: 120)
@@ -139,7 +141,7 @@ struct GameView: View {
                 .resizable()
                 .frame(width: 70, height: 70)
         }
-        .disabled(logoManager.logo.solved)
+        .disabled(gameManager.solved)
     }
     
     var nextButton: some View {
@@ -157,6 +159,6 @@ struct GameView: View {
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {
-        GameView(logoManager: LogoManager(logo: Logo(name: "오동통면", solved: false, answerChoices: ["면", "꼬", "삼", "개", "짜", "라" , "장", "선", "육", "꼬"]), delegate: LogoListManager()) , parentSize: CGSize(width: 393, height: 852))
+        GameView(gameManager: GameManager(logo: Logo(name: "오동통면", solved: false, answerChoices: ["면", "꼬", "삼", "개", "짜", "라" , "장", "선", "육", "꼬"]), delegate: LogoListManager()) , parentSize: CGSize(width: 393, height: 852), trigger: Binding.constant(false))
     }
 }

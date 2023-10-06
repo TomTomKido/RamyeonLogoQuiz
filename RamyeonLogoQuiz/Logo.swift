@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Logo: Hashable {
+struct Logo: Hashable, Codable {
     let name: String
     let solved: Bool
     let answerChoices: [String]

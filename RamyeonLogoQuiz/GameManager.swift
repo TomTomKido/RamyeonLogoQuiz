@@ -7,36 +7,45 @@
 
 import Combine
 
-class LogoManager: ObservableObject {
+class GameManager: ObservableObject {
     weak var delegate: LogoListManager?
     private(set) var logo: Logo
     private let answer: [String]
     private var answerChoiceLetters: [ChoiceLetter]
     @Published var answerTrialLetters: [TrialLetter]
-    private var subscriptions = Set<AnyCancellable>()
-    private var currentIndex: Int = 0
+    private var subscriptions: Set<AnyCancellable>
+    private var currentIndex: Int
+    private(set) var solved: Bool
     
     init(logo: Logo, delegate: LogoListManager) {
+        self.delegate = delegate
         self.logo = logo
         self.answer = logo.name.map { String($0) }
         self.answerChoiceLetters = logo.answerChoices.map { ChoiceLetter(letter: $0, status: .unsolved, answerIndex: -1) }
         self.answerTrialLetters = Array(repeating: TrialLetter(), count: logo.letterCount)
-        self.delegate = delegate
+        self.subscriptions = Set<AnyCancellable>()
+        self.currentIndex = 0
+        self.solved = false
         
         logo.name.enumerated().forEach { [weak self] (index, letter) in
             if let targetIndex = self?.answerChoiceLetters.firstIndex(where: { $0.letter == String(letter) && $0.answerIndex == -1 }) {
                 self?.answerChoiceLetters[targetIndex].initialize(answerIndex: index)
             }
         }
-
-//        $revealedAnswers
-//            .sink { [weak self] answers in
-//                guard let self else { return }
-//                if answers.joined() == self.logo.name {
-//                    self.delegate?.updateLogo(logo: self.logo)
-//                }
-//            }
-//            .store(in: &subscriptions)
+    }
+    
+    func reset() {
+        self.answerChoiceLetters = logo.answerChoices.map { ChoiceLetter(letter: $0, status: .unsolved, answerIndex: -1) }
+        self.answerTrialLetters = Array(repeating: TrialLetter(), count: logo.letterCount)
+        self.subscriptions = Set<AnyCancellable>()
+        self.currentIndex = 0
+        self.solved = false
+        
+        logo.name.enumerated().forEach { [weak self] (index, letter) in
+            if let targetIndex = self?.answerChoiceLetters.firstIndex(where: { $0.letter == String(letter) && $0.answerIndex == -1 }) {
+                self?.answerChoiceLetters[targetIndex].initialize(answerIndex: index)
+            }
+        }
     }
     
     //MARK: choice
@@ -109,18 +118,6 @@ class LogoManager: ObservableObject {
         }
     }
     
-    private func moveCurrentIndexForward() {
-//        repeat {
-//            if answerTrialLetters[currentIndex].letter == "" {
-//                currentIndex += 1
-//            }
-//        } while currentIndex < answerTrialLetters.count && answerTrialLetters[currentIndex].letter == ""
-    }
-    
-    private func moveCurrentIndexBackward() {
-        
-    }
-    
     //MARK: disable block
     
     func shouldDisableChoiceLetter(at choiceIndex: Int) -> Bool {
@@ -184,6 +181,7 @@ class LogoManager: ObservableObject {
             let newLogo = Logo(name: logo.name, solved: true, answerChoices: logo.answerChoices)
             logo = newLogo
             delegate?.updateLogo(newLogo: newLogo)
+            solved = true
             return true
         }
         

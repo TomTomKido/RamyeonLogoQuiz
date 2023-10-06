@@ -16,7 +16,9 @@ class LogoListManager: ObservableObject {
         }
         return answerCharacters
     }()
-    private(set) var logoList: [Logo] = []
+    private var tempLogoList: [Logo] = []
+    @Published private(set) var logoList: [Logo] = []
+    private var subscriptions: Set<AnyCancellable> = []
 
     private let bongjiPaldo: [String] = ["꼬꼬면", "남자라면", "비빔면레몬", "왕뚜껑", "일품삼선짜장", "일품해물라면", "틈새라면", "틈새라면고기짬뽕", "틈새라면매운김치", "틈새라면매운짜장", "틈새라면매운카레", "팔도비빔면", "팔도비빔면매운맛", "팔도비빔쫄면", "팔도짜장면"]
 
@@ -30,7 +32,11 @@ class LogoListManager: ObservableObject {
     
     func updateLogo(newLogo: Logo) {
         let index = logoIndex(for: newLogo.name)
-        logoList[index] = newLogo
+        tempLogoList[index] = newLogo
+    }
+    
+    func updateLogoList() {
+        logoList = tempLogoList
     }
     
     private func logoIndex(for targetName: String) -> Int {
@@ -38,13 +44,24 @@ class LogoListManager: ObservableObject {
     }
     
     private func initializeLogoList() {
-        if let logoList = UserDefaults.standard.object(forKey: "logoList") as? [Logo] {
+        if let data = UserDefaults.standard.object(forKey: "logoList") as? Data,
+           let logoList = try? JSONDecoder().decode([Logo].self, from: data) {
             self.logoList = logoList
+            self.tempLogoList = logoList
         } else {
-            self.logoList = (bongjiPaldo + bongjiOttugi + bongjiNongshim).map {
+            let logoList = (bongjiPaldo + bongjiOttugi + bongjiNongshim).map {
                 Logo(name: $0, answerChoices: getAnswerChoices(name: $0))
             }
+            self.logoList = logoList
+            self.tempLogoList = logoList
         }
+        
+        $logoList
+            .sink { updatedLogoList in
+                guard let data = try? JSONEncoder().encode(updatedLogoList) else { return }
+                UserDefaults.standard.set(data, forKey: "logoList")
+            }
+            .store(in: &subscriptions)
     }
     
     private func getAnswerChoices(name: String) -> [String] {
@@ -60,9 +77,5 @@ class LogoListManager: ObservableObject {
         } while answerChoices.count < 10
         
         return answerChoices.shuffled()
-    }
-    
-    deinit {
-        UserDefaults.standard.set(logoList, forKey: "logoList")
     }
 }

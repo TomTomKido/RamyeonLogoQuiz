@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LogoListView: View {
     @StateObject var logoListManager = LogoListManager()
+    @State var trigger: Bool = false
     let columns = Array(repeating: GridItem(.flexible(minimum: 100, maximum: 150)), count: 3)
     
     var body: some View {
@@ -18,8 +19,10 @@ struct LogoListView: View {
                     VStack(alignment: .leading) {
                         LazyVGrid(columns: columns) {
                             ForEach(logoListManager.logoList, id: \.self) { logo in
+                                let gameManager = GameManager(logo: logo, delegate: logoListManager)
+                                let gameView = GameView(gameManager: gameManager, parentSize: parent.size, trigger: $trigger)
                                 NavigationLink {
-                                    GameView(logoManager: LogoManager(logo: logo, delegate: logoListManager), parentSize: parent.size)
+                                    gameView
                                 } label: {
                                     gridImage(logo: logo)
                                 }
@@ -32,6 +35,11 @@ struct LogoListView: View {
             .background(Color.darkBlue)
         }
         .navigationTitle("라면 퀴즈")
+        .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: trigger, perform: { newValue in
+            logoListManager.updateLogoList()
+            trigger = false
+        })
     }
     
     func gridImage(logo: Logo) -> some View {
