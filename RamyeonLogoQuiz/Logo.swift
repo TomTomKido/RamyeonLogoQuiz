@@ -11,11 +11,13 @@ struct Logo: Hashable, Codable {
     let name: String
     let solved: Bool
     let answerChoices: [String]
+    let id: Int
     
-    init(name: String, solved: Bool = false, answerChoices: [String]) {
+    init(name: String, solved: Bool = false, answerChoices: [String], id: Int) {
         self.name = name
         self.solved = solved
         self.answerChoices = answerChoices
+        self.id = id
     }
     
     var logoName: String {
@@ -46,5 +48,6 @@ extension Logo {
         name = ""
         solved = false
         answerChoices = []
+        id = -1
     }
 }

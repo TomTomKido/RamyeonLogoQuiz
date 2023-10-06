@@ -10,12 +10,20 @@ import Combine
 class GameManager: ObservableObject {
     weak var delegate: LogoListManager?
     private(set) var logo: Logo
-    private let answer: [String]
+    private var answer: [String]
     private var answerChoiceLetters: [ChoiceLetter]
     @Published var answerTrialLetters: [TrialLetter]
     private var subscriptions: Set<AnyCancellable>
     private var currentIndex: Int
     private(set) var solved: Bool
+    
+    var currentLogoID: Int {
+        logo.id
+    }
+    
+    var quizImageName: String {
+        solved ? logo.afterName : logo.beforeName
+    }
     
     init(logo: Logo, delegate: LogoListManager) {
         self.delegate = delegate
@@ -34,14 +42,21 @@ class GameManager: ObservableObject {
         }
     }
     
-    func reset() {
-        self.answerChoiceLetters = logo.answerChoices.map { ChoiceLetter(letter: $0, status: .unsolved, answerIndex: -1) }
-        self.answerTrialLetters = Array(repeating: TrialLetter(), count: logo.letterCount)
+    func reset(logo: Logo? = nil) {
+        if let logo {
+            self.logo = logo
+        }
+        
+        self.answer = self.logo.name.map { String($0) }
+        self.answerChoiceLetters = self.logo.answerChoices.map {
+            ChoiceLetter(letter: $0, status: .unsolved, answerIndex: -1)
+        }
+        self.answerTrialLetters = Array(repeating: TrialLetter(), count: self.logo.letterCount)
         self.subscriptions = Set<AnyCancellable>()
         self.currentIndex = 0
         self.solved = false
         
-        logo.name.enumerated().forEach { [weak self] (index, letter) in
+        self.logo.name.enumerated().forEach { [weak self] (index, letter) in
             if let targetIndex = self?.answerChoiceLetters.firstIndex(where: { $0.letter == String(letter) && $0.answerIndex == -1 }) {
                 self?.answerChoiceLetters[targetIndex].initialize(answerIndex: index)
             }
@@ -178,7 +193,7 @@ class GameManager: ObservableObject {
     
     private func didFinishGame() -> Bool {
         if answerTrialLetters.filter({ !$0.revealed }).count == 0 {
-            let newLogo = Logo(name: logo.name, solved: true, answerChoices: logo.answerChoices)
+            let newLogo = Logo(name: logo.name, solved: true, answerChoices: logo.answerChoices, id: logo.id)
             logo = newLogo
             delegate?.updateLogo(newLogo: newLogo)
             solved = true

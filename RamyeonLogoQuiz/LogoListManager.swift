@@ -17,7 +17,7 @@ class LogoListManager: ObservableObject {
         return answerCharacters
     }()
     private var tempLogoList: [Logo] = []
-    @Published private(set) var logoList: [Logo] = []
+    @Published var logoList: [Logo] = []
     private var subscriptions: Set<AnyCancellable> = []
 
     private let bongjiPaldo: [String] = ["꼬꼬면", "남자라면", "비빔면레몬", "왕뚜껑", "일품삼선짜장", "일품해물라면", "틈새라면", "틈새라면고기짬뽕", "틈새라면매운김치", "틈새라면매운짜장", "틈새라면매운카레", "팔도비빔면", "팔도비빔면매운맛", "팔도비빔쫄면", "팔도짜장면"]
@@ -26,8 +26,16 @@ class LogoListManager: ObservableObject {
 
     private let  bongjiNongshim: [String] = ["감자면", "둥지냉면동치미물냉면", "둥지냉면비빔냉면", "멸치칼국수", "무파타탕면", "배홍동비빔면", "보글보글부대찌개면", "볶음너구리", "사리곰탕면", "사천백짬뽕", "사천짜파게티", "순한너구리", "시원한메밀소바", "신라면", "신라면건면", "신라면더레드", "신라면블랙", "신라면블랙두부김치", "안성탕면", "앵그리너구리", "앵그리짜파구리", "야채라면", "얼큰한너구리", "오징어짬뽕", "육개장라면", "장칼국수", "짜왕건면", "짜파게티", "찰비빔면", "튀김우동면", "해물안성탕면", "후루룩국수", "후루룩칼국수"]
     
+    private lazy var names: [String] = {
+        bongjiPaldo + bongjiOttugi + bongjiNongshim
+    }()
+    
     init() {
         initializeLogoList()
+    }
+    
+    func name(id: Int) -> String {
+        names[id]
     }
     
     func updateLogo(newLogo: Logo) {
@@ -49,8 +57,8 @@ class LogoListManager: ObservableObject {
             self.logoList = logoList
             self.tempLogoList = logoList
         } else {
-            let logoList = (bongjiPaldo + bongjiOttugi + bongjiNongshim).map {
-                Logo(name: $0, answerChoices: getAnswerChoices(name: $0))
+            let logoList = (bongjiPaldo + bongjiOttugi + bongjiNongshim).enumerated().map { (index, name) in
+                Logo(name: name, answerChoices: getAnswerChoices(name: name), id: index)
             }
             self.logoList = logoList
             self.tempLogoList = logoList
@@ -77,5 +85,13 @@ class LogoListManager: ObservableObject {
         } while answerChoices.count < 10
         
         return answerChoices.shuffled()
+    }
+    
+    func nextLogo(currentId: Int) -> Logo? {
+        guard currentId + 1 < logoList.count else {
+            return nil
+        }
+
+        return logoList[currentId + 1]
     }
 }

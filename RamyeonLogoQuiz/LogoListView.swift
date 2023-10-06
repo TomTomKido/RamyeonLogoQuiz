@@ -21,6 +21,7 @@ struct LogoListView: View {
                             ForEach(logoListManager.logoList, id: \.self) { logo in
                                 let gameManager = GameManager(logo: logo, delegate: logoListManager)
                                 let gameView = GameView(gameManager: gameManager, parentSize: parent.size, trigger: $trigger)
+                                    .environmentObject(logoListManager)
                                 NavigationLink {
                                     gameView
                                 } label: {

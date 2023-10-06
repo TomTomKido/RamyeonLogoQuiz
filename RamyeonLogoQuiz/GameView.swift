@@ -13,6 +13,7 @@ struct GameView: View {
     let parentSize: CGSize
     @Binding var trigger: Bool
     let blockSize: CGFloat = 50
+    @EnvironmentObject var logoListManager: LogoListManager
     
     var imageBlockSize: CGFloat {
         2 / 3 * parentSize.width
@@ -79,7 +80,7 @@ struct GameView: View {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.accentBlue, lineWidth: 10)
                 }
-            Image(gameManager.logo.logoName)
+            Image(gameManager.quizImageName)
                 .resizable()
                 .scaledToFill()
                 .frame(width: imageBlockSize - 30, height: imageBlockSize - 30)
@@ -146,7 +147,9 @@ struct GameView: View {
     
     var nextButton: some View {
         Button {
-            print("next")
+            if let nextLogo = logoListManager.nextLogo(currentId: gameManager.currentLogoID) {
+                gameManager.reset(logo: nextLogo)
+            }
         } label: {
             Image("다음버튼")
                 .resizable()
@@ -159,6 +162,6 @@ struct GameView: View {
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {
-        GameView(gameManager: GameManager(logo: Logo(name: "오동통면", solved: false, answerChoices: ["면", "꼬", "삼", "개", "짜", "라" , "장", "선", "육", "꼬"]), delegate: LogoListManager()) , parentSize: CGSize(width: 393, height: 852), trigger: Binding.constant(false))
+        GameView(gameManager: GameManager(logo: Logo(name: "오동통면", solved: false, answerChoices: ["면", "꼬", "삼", "개", "짜", "라" , "장", "선", "육", "꼬"], id: 3), delegate: LogoListManager()) , parentSize: CGSize(width: 393, height: 852), trigger: Binding.constant(false))
     }
 }
