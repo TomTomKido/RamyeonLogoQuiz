@@ -29,20 +29,31 @@ struct GameView: View {
             Rectangle()
                 .ignoresSafeArea(.all)
                 .foregroundColor(.darkBlue)
-            VStack(alignment: .center) {
+            VStack(alignment: .center, spacing: 0) {
                 Rectangle()
                     .ignoresSafeArea(.all)
                     .foregroundColor(.basicBlue)
-                    .frame(height: 20)
+                    .frame(height: 10)
+                Rectangle()
+                    .ignoresSafeArea(.all)
+                    .foregroundColor(.accentBlue)
+                    .frame(height: 5)
                 Spacer(minLength: 30)
                 quizImage
                 answerBlock
                 gameManager.solved ? AnyView(nextButton) : AnyView(answerChoicesBlock)
                 Spacer(minLength: 70)
                 ZStack {
-                    Rectangle()
-                        .edgesIgnoringSafeArea(.all)
-                        .foregroundColor(.basicBlue)
+                    VStack(spacing: 0) {
+                        Rectangle()
+                            .edgesIgnoringSafeArea(.all)
+                            .foregroundColor(.accentBlue)
+                            .frame(height: 5)
+                        Rectangle()
+                            .edgesIgnoringSafeArea(.all)
+                            .foregroundColor(.basicBlue)
+                            .frame(height: 100)
+                    }
                     HStack {
                         Spacer()
                         bottomButton(name: "x_button") {
