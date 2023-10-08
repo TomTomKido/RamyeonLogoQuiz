@@ -10,6 +10,7 @@
 		D4B052DF2ABAA7B500BB1DE7 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B052DE2ABAA7B500BB1DE7 /* GameView.swift */; };
 		D4B052E32ABAB97300BB1DE7 /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B052E22ABAB97300BB1DE7 /* Color+Extension.swift */; };
 		D4D465EB2ACAF5D1005265F7 /* GameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D465EA2ACAF5D1005265F7 /* GameManager.swift */; };
+		D4D465EF2AD2B7BD005265F7 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D465EE2AD2B7BD005265F7 /* Theme.swift */; };
 		D4D660782AA5F0C500730B6D /* RamyeonLogoQuizApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D660772AA5F0C500730B6D /* RamyeonLogoQuizApp.swift */; };
 		D4D6607A2AA5F0C500730B6D /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D660792AA5F0C500730B6D /* RootView.swift */; };
 		D4D6607C2AA5F0C900730B6D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D4D6607B2AA5F0C900730B6D /* Assets.xcassets */; };
@@ -24,6 +25,7 @@
 		D4B052DE2ABAA7B500BB1DE7 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
 		D4B052E22ABAB97300BB1DE7 /* Color+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
 		D4D465EA2ACAF5D1005265F7 /* GameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameManager.swift; sourceTree = "<group>"; };
+		D4D465EE2AD2B7BD005265F7 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		D4D660742AA5F0C500730B6D /* RamyeonLogoQuiz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RamyeonLogoQuiz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4D660772AA5F0C500730B6D /* RamyeonLogoQuizApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RamyeonLogoQuizApp.swift; sourceTree = "<group>"; };
 		D4D660792AA5F0C500730B6D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 		D4D660762AA5F0C500730B6D /* RamyeonLogoQuiz */ = {
 			isa = PBXGroup;
 			children = (
+				D4D465EE2AD2B7BD005265F7 /* Theme.swift */,
 				D4D660772AA5F0C500730B6D /* RamyeonLogoQuizApp.swift */,
 				D4D660792AA5F0C500730B6D /* RootView.swift */,
 				D4D660852AA600CD00730B6D /* MainView.swift */,
@@ -161,6 +164,7 @@
 				D4D6607A2AA5F0C500730B6D /* RootView.swift in Sources */,
 				D4E144552AB81D9500EC93D7 /* Logo.swift in Sources */,
 				D4D6608A2AA6078E00730B6D /* LogoListView.swift in Sources */,
+				D4D465EF2AD2B7BD005265F7 /* Theme.swift in Sources */,
 				D4B052E32ABAB97300BB1DE7 /* Color+Extension.swift in Sources */,
 				D4D660862AA600CD00730B6D /* MainView.swift in Sources */,
 				D4B052DF2ABAA7B500BB1DE7 /* GameView.swift in Sources */,

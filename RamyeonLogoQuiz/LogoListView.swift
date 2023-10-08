@@ -12,6 +12,10 @@ struct LogoListView: View {
     @State var trigger: Bool = false
     let columns = Array(repeating: GridItem(.flexible(minimum: 100, maximum: 150)), count: 3)
     
+    init() {
+        Theme.navigationBarColors(background: UIColor(Color.basicBlue), titleColor: .white)
+    }
+    
     var body: some View {
         NavigationView {
             GeometryReader { parent in

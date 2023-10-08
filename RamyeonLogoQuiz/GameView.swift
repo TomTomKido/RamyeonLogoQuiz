@@ -54,7 +54,6 @@ struct GameView: View {
                         }
                         Spacer()
                     }
-                    .padding(20)
                 }
                 .frame(height: 70)
             }
@@ -69,6 +68,7 @@ struct GameView: View {
                 .resizable()
                 .frame(width: 40, height: 40)
         })
+        .navigationTitle("Stage \(gameManager.currentLogoID + 1)")
     }
     
     var quizImage: some View {
