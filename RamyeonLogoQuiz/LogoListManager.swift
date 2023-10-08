@@ -16,9 +16,13 @@ class LogoListManager: ObservableObject {
         }
         return answerCharacters
     }()
-    private var tempLogoList: [Logo] = []
+    private var tempLogoList: [Logo] = [] {
+        didSet {
+            guard let data = try? JSONEncoder().encode(tempLogoList) else { return }
+            UserDefaults.standard.set(data, forKey: "logoList")
+        }
+    }
     @Published var logoList: [Logo] = []
-    private var subscriptions: Set<AnyCancellable> = []
 
     private let bongjiPaldo: [String] = ["꼬꼬면", "남자라면", "비빔면레몬", "왕뚜껑", "일품삼선짜장", "일품해물라면", "틈새라면", "틈새라면고기짬뽕", "틈새라면매운김치", "틈새라면매운짜장", "틈새라면매운카레", "팔도비빔면", "팔도비빔면매운맛", "팔도비빔쫄면", "팔도짜장면"]
 
@@ -63,13 +67,6 @@ class LogoListManager: ObservableObject {
             self.logoList = logoList
             self.tempLogoList = logoList
         }
-        
-        $logoList
-            .sink { updatedLogoList in
-                guard let data = try? JSONEncoder().encode(updatedLogoList) else { return }
-                UserDefaults.standard.set(data, forKey: "logoList")
-            }
-            .store(in: &subscriptions)
     }
     
     private func getAnswerChoices(name: String) -> [String] {
