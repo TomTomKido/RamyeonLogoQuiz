@@ -10,18 +10,22 @@ import SwiftUI
 struct LogoListView: View {
     @StateObject var logoListManager = LogoListManager()
     @State var trigger: Bool = false
-    let columns = Array(repeating: GridItem(.flexible(minimum: 100, maximum: 150)), count: 3)
+    let gridSize: CGFloat = Utils.isIPad ? 200 : 100
+    let spacing: CGFloat = Utils.isIPad ? 40 : 20
+    let checkmarkCircleSize: CGFloat = Utils.isIPad ? 34 : 17
+    let cornerRadius: CGFloat = Utils.isIPad ? 12 : 6
     
     init() {
         Theme.navigationBarColors(background: UIColor(Color.basicBlue), titleColor: .white)
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             GeometryReader { parent in
                 ScrollView {
                     VStack(alignment: .leading) {
-                        LazyVGrid(columns: columns) {
+                        let columns = [GridItem(.adaptive(minimum: gridSize, maximum: gridSize * 1.5), spacing: spacing)]
+                        LazyVGrid(columns: columns, spacing: spacing) {
                             ForEach(logoListManager.logoList, id: \.self) { logo in
                                 let gameManager = GameManager(logo: logo, delegate: logoListManager)
                                 let gameView = GameView(gameManager: gameManager, parentSize: parent.size, trigger: $trigger)
@@ -33,7 +37,7 @@ struct LogoListView: View {
                                 }
                             }
                         }
-                        .padding()
+                        .padding(spacing)
                     }
                 }
             }
@@ -49,31 +53,30 @@ struct LogoListView: View {
     
     func gridImage(logo: Logo) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 6)
-                .frame(width: 110, height: 110)
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .frame(width: gridSize + 20, height: gridSize + 20)
                 .foregroundColor(.white)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.accentBlue, lineWidth: 5)
-                }
             Image(logo.logoName)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 90, height: 90)
+                .frame(width: gridSize, height: gridSize)
                 .clipped()
             if logo.solved {
                 solvedCover
                 checkMark
-                    .padding(EdgeInsets(top: 80, leading: 80, bottom: 10, trailing: 10))
+                    .padding(EdgeInsets(top: gridSize - 20, leading: gridSize - 20, bottom: 10, trailing: 10))
             }
         }
-        .padding(3)
+        .overlay {
+            RoundedRectangle(cornerRadius: cornerRadius + 4)
+                .stroke(Color.accentBlue, lineWidth: Utils.isIPad ? 8 : 5)
+        }
     }
     
     var solvedCover: some View {
         Image("solvedCover")
             .resizable()
-            .frame(width: 100, height: 100)
+            .frame(width: gridSize + 20, height: gridSize + 20)
             .opacity(0.5)
     }
     
@@ -81,10 +84,10 @@ struct LogoListView: View {
         ZStack {
             Circle()
                 .foregroundColor(.white)
-                .frame(width: 17, height: 17)
+                .frame(width: checkmarkCircleSize, height: checkmarkCircleSize)
             Image(systemName: "checkmark.circle.fill")
                 .resizable()
-                .frame(width: 15, height: 15)
+                .frame(width: checkmarkCircleSize - 2, height: checkmarkCircleSize - 2)
                 .foregroundColor(.green)
         }
     }

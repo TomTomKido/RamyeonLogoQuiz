@@ -28,6 +28,7 @@
 		D4D465EA2ACAF5D1005265F7 /* GameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameManager.swift; sourceTree = "<group>"; };
 		D4D465EE2AD2B7BD005265F7 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		D4D465F02AD2CA14005265F7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D4D465F12AD2F506005265F7 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		D4D660742AA5F0C500730B6D /* RamyeonLogoQuiz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RamyeonLogoQuiz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4D660772AA5F0C500730B6D /* RamyeonLogoQuizApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RamyeonLogoQuizApp.swift; sourceTree = "<group>"; };
 		D4D660792AA5F0C500730B6D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -74,6 +75,7 @@
 				D4D660772AA5F0C500730B6D /* RamyeonLogoQuizApp.swift */,
 				D4D660792AA5F0C500730B6D /* RootView.swift */,
 				D4D660852AA600CD00730B6D /* MainView.swift */,
+				D4D465F12AD2F506005265F7 /* Utils.swift */,
 				D4D660892AA6078E00730B6D /* LogoListView.swift */,
 				D4B052DE2ABAA7B500BB1DE7 /* GameView.swift */,
 				D4B052E22ABAB97300BB1DE7 /* Color+Extension.swift */,
@@ -171,6 +173,7 @@
 				D4B052E32ABAB97300BB1DE7 /* Color+Extension.swift in Sources */,
 				D4D660862AA600CD00730B6D /* MainView.swift in Sources */,
 				D4B052DF2ABAA7B500BB1DE7 /* GameView.swift in Sources */,
+				D4D465F22AD2F506005265F7 /* Utils.swift in Sources */,
 				D4D9691B2AC8606800FFA748 /* LogoListManager.swift in Sources */,
 				D4D465EB2ACAF5D1005265F7 /* GameManager.swift in Sources */,
 				D4D660782AA5F0C500730B6D /* RamyeonLogoQuizApp.swift in Sources */,

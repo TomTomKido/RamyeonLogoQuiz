@@ -12,15 +12,22 @@ struct GameView: View {
     @Environment(\.presentationMode) var presentationMode
     let parentSize: CGSize
     @Binding var trigger: Bool
-    let blockSize: CGFloat = 50
+    let blockSize: CGFloat = Utils.isIPad ? 80 : 50
+    let backButtonSize: CGFloat = Utils.isIPad ? 60 : 40
+    let bottomButtonSize: CGFloat = Utils.isIPad ? 80 : 70
+    let cornerRadius: CGFloat = Utils.isIPad ? 20 : 10
+    let nextButtonSize: CGFloat = Utils.isIPad ? 250 : 200
+    let font: Font = Utils.isIPad ? .largeTitle : .title2
+    let padding: CGFloat = Utils.isIPad ? 30 : 20
+    let blockSpacing: CGFloat = Utils.isIPad ? 20 : 10
     @EnvironmentObject var logoListManager: LogoListManager
     
     var imageBlockSize: CGFloat {
-        2 / 3 * parentSize.width
+        Utils.isIPad ? parentSize.height * 1 / 3 : parentSize.width * 2 / 3
     }
     
     var answerBlockSize: CGFloat {
-        let width = (parentSize.width - 20 - CGFloat(10 * gameManager.logo.letterCount)) / CGFloat(gameManager.logo.letterCount)
+        let width = (parentSize.width - blockSpacing - CGFloat(10 * gameManager.logo.letterCount)) / CGFloat(gameManager.logo.letterCount)
         return min(width, blockSize)
     }
 
@@ -33,16 +40,18 @@ struct GameView: View {
                 Rectangle()
                     .ignoresSafeArea(.all)
                     .foregroundColor(.basicBlue)
-                    .frame(height: 10)
+                    .frame(height: Utils.isIPad ? 20 : 10)
                 Rectangle()
                     .ignoresSafeArea(.all)
                     .foregroundColor(.accentBlue)
                     .frame(height: 5)
-                Spacer(minLength: 30)
+                Spacer()
                 quizImage
+                Spacer()
                 answerBlock
+                Spacer()
                 gameManager.solved ? AnyView(nextButton) : AnyView(answerChoicesBlock)
-                Spacer(minLength: 70)
+                Spacer()
                 ZStack {
                     VStack(spacing: 0) {
                         Rectangle()
@@ -52,7 +61,7 @@ struct GameView: View {
                         Rectangle()
                             .edgesIgnoringSafeArea(.all)
                             .foregroundColor(.basicBlue)
-                            .frame(height: 100)
+                            .frame(height: Utils.isIPad ? 130 : 100)
                     }
                     HStack {
                         Spacer()
@@ -65,7 +74,9 @@ struct GameView: View {
                         }
                         Spacer()
                     }
+                    .padding(.bottom, padding/2)
                 }
+                .padding(.top, padding)
                 .frame(height: 70)
             }
         }
@@ -77,20 +88,17 @@ struct GameView: View {
         }) {
             Image("백버튼")
                 .resizable()
-                .frame(width: 40, height: 40)
+                .frame(width: backButtonSize, height: backButtonSize)
         })
         .navigationTitle("Stage \(gameManager.currentLogoID + 1)")
     }
     
     var quizImage: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: cornerRadius)
                 .foregroundColor(.white)
                 .frame(width: imageBlockSize, height: imageBlockSize)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.accentBlue, lineWidth: 10)
-                }
+                
             Image(gameManager.quizImageName)
                 .resizable()
                 .scaledToFill()
@@ -104,17 +112,21 @@ struct GameView: View {
                     .opacity(0.5)
             }
         }
+        .overlay {
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .stroke(Color.accentBlue, lineWidth: Utils.isIPad ? 12 : 10)
+        }
     }
     
     var answerBlock: some View {
-        LazyHGrid(rows: [.init(.fixed(answerBlockSize))]) {
+        LazyHGrid(rows: [.init(.fixed(answerBlockSize), spacing: blockSpacing)]) {
             ForEach(0..<gameManager.logo.letterCount, id: \.self) { index in
                 ZStack {
                     Image(gameManager.answerTrialBackground(at: index))
                         .resizable()
                         .frame(width: answerBlockSize, height: answerBlockSize)
                     Text(gameManager.answerTrialLetter(at: index))
-                        .font(.title2)
+                        .font(font)
                         .foregroundColor(gameManager.isSolvedAnswerLetter(at: index) ? .white : .black)
                         .fontWeight(.medium)
                 }
@@ -127,14 +139,14 @@ struct GameView: View {
     }
     
     var answerChoicesBlock: some View {
-        LazyVGrid(columns: Array(repeating: .init(.fixed(blockSize)), count: 5)) {
+        LazyVGrid(columns: Array(repeating: .init(.fixed(blockSize), spacing: blockSpacing), count: 5)) {
             ForEach(0..<10) { index in
                 ZStack {
                     Image(gameManager.answerChoiceBackground(at: index))
                         .resizable()
                         .frame(width: blockSize, height: blockSize)
                     Text(gameManager.answerChoiceLetter(at: index))
-                        .font(.title2)
+                        .font(font)
                 }
                 .onTapGesture {
                     gameManager.tryAnswerChoice(at: index)
@@ -142,7 +154,7 @@ struct GameView: View {
                 .disabled(gameManager.shouldDisableChoiceLetter(at: index))
             }
         }
-        .frame(maxHeight: 120)
+        .frame(maxHeight: nextButtonSize)
     }
     
     func bottomButton(name: String, action: @escaping () -> Void) -> some View {
@@ -151,7 +163,7 @@ struct GameView: View {
         } label: {
             Image(name)
                 .resizable()
-                .frame(width: 70, height: 70)
+                .frame(width: bottomButtonSize, height: bottomButtonSize)
         }
         .disabled(gameManager.solved)
     }
@@ -165,9 +177,9 @@ struct GameView: View {
             Image("다음버튼")
                 .resizable()
                 .scaledToFit()
-                .frame(width: parentSize.width / 2)
+                .frame(width: nextButtonSize)
         }
-        .frame(maxHeight: 120)
+        .frame(maxHeight: nextButtonSize)
     }
 }
 
