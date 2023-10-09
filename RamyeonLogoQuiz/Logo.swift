@@ -7,15 +7,17 @@
 
 import Foundation
 
-struct Logo: Hashable {
+struct Logo: Hashable, Codable {
     let name: String
-    private(set) var solved: Bool
-    private(set) var answerChoices: [String]
+    let solved: Bool
+    let answerChoices: [String]
+    let id: Int
     
-    init(name: String, solved: Bool = false, answerChoices: [String]) {
+    init(name: String, solved: Bool = false, answerChoices: [String], id: Int) {
         self.name = name
         self.solved = solved
         self.answerChoices = answerChoices
+        self.id = id
     }
     
     var logoName: String {
@@ -39,8 +41,13 @@ struct Logo: Hashable {
             String($0)
         }
     }
-    
-    mutating func didSolve() {
-        solved = true
+}
+
+extension Logo {
+    init() {
+        name = ""
+        solved = false
+        answerChoices = []
+        id = -1
     }
 }

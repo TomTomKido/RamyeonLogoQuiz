@@ -8,165 +8,183 @@
 import SwiftUI
 
 struct GameView: View {
-    var logo: Logo
+    @ObservedObject var gameManager: GameManager
+    @Environment(\.presentationMode) var presentationMode
     let parentSize: CGSize
-    let blockSize: CGFloat = 50
+    @Binding var trigger: Bool
+    let blockSize: CGFloat = Utils.isIPad ? 80 : 50
+    let backButtonSize: CGFloat = Utils.isIPad ? 60 : 40
+    let bottomButtonSize: CGFloat = Utils.isIPad ? 80 : 70
+    let cornerRadius: CGFloat = Utils.isIPad ? 20 : 10
+    let nextButtonSize: CGFloat = Utils.isIPad ? 250 : 200
+    let font: Font = Utils.isIPad ? .largeTitle : .title2
+    let padding: CGFloat = Utils.isIPad ? 30 : 20
+    let blockSpacing: CGFloat = Utils.isIPad ? 20 : 10
+    @EnvironmentObject var logoListManager: LogoListManager
     
     var imageBlockSize: CGFloat {
-        2 / 3 * parentSize.width
+        Utils.isIPad ? parentSize.height * 1 / 3 : parentSize.width * 2 / 3
     }
     
     var answerBlockSize: CGFloat {
-        let width = (parentSize.width - 20 - CGFloat(10 * logo.letterCount)) / CGFloat(logo.letterCount)
+        let width = (parentSize.width - blockSpacing - CGFloat(10 * gameManager.logo.letterCount)) / CGFloat(gameManager.logo.letterCount)
         return min(width, blockSize)
     }
-    @State var isAnimatingErrorView = false
-    @State var revealedAnswers: [String] = []
-    @State var targetLetterIndex: Int = 0
-    @State var isShowingPopup: Bool = true
 
     var body: some View {
         ZStack {
-            VStack {
-                quizImage
-                    .padding(.vertical, 20)
-                answerBlock
-                answerChoicesBlock
-                Spacer()
-            }
-            .background(Color.darkBlue)
-            .overlay {
+            Rectangle()
+                .ignoresSafeArea(.all)
+                .foregroundColor(.darkBlue)
+            VStack(alignment: .center, spacing: 0) {
                 Rectangle()
-                    .foregroundColor(.red)
-                    .opacity(isAnimatingErrorView ? 0.3 : 0)
-                    .animation(.easeIn(duration: 0.1), value: isAnimatingErrorView)
-            }
-            if isShowingPopup {
-                successView
+                    .ignoresSafeArea(.all)
+                    .foregroundColor(.basicBlue)
+                    .frame(height: Utils.isIPad ? 20 : 10)
+                Rectangle()
+                    .ignoresSafeArea(.all)
+                    .foregroundColor(.accentBlue)
+                    .frame(height: 5)
+                Spacer()
+                quizImage
+                Spacer()
+                answerBlock
+                Spacer()
+                gameManager.solved ? AnyView(nextButton) : AnyView(answerChoicesBlock)
+                Spacer()
+                ZStack {
+                    VStack(spacing: 0) {
+                        Rectangle()
+                            .edgesIgnoringSafeArea(.all)
+                            .foregroundColor(.accentBlue)
+                            .frame(height: 5)
+                        Rectangle()
+                            .edgesIgnoringSafeArea(.all)
+                            .foregroundColor(.basicBlue)
+                            .frame(height: Utils.isIPad ? 130 : 100)
+                    }
+                    HStack {
+                        Spacer()
+                        bottomButton(name: "x_button") {
+                            gameManager.xButtonTapped()
+                        }
+                        Spacer()
+                        bottomButton(name: "retry_button") {
+                            gameManager.retryButtonTapped()
+                        }
+                        Spacer()
+                    }
+                    .padding(.bottom, padding/2)
+                }
+                .padding(.top, padding)
+                .frame(height: 70)
             }
         }
-        .disabled(targetLetterIndex == logo.letterCount)
-        .onChange(of: revealedAnswers.joined(), perform: { newValue in
-            if newValue == logo.name {
-                isShowingPopup = true
-            }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: Button(action: {
+            gameManager.reset()
+            trigger = true
+            self.presentationMode.wrappedValue.dismiss()
+        }) {
+            Image("백버튼")
+                .resizable()
+                .frame(width: backButtonSize, height: backButtonSize)
         })
+        .navigationTitle("Stage \(gameManager.currentLogoID + 1)")
     }
     
     var quizImage: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: cornerRadius)
                 .foregroundColor(.white)
                 .frame(width: imageBlockSize, height: imageBlockSize)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.accentBlue, lineWidth: 10)
-                }
-            Image(logo.logoName)
+                
+            Image(gameManager.quizImageName)
                 .resizable()
                 .scaledToFill()
                 .frame(width: imageBlockSize - 30, height: imageBlockSize - 30)
                 .clipped()
+            
+            if gameManager.solved {
+                Image("gameSuccessCover")
+                    .resizable()
+                    .frame(width: imageBlockSize, height: imageBlockSize)
+                    .opacity(0.5)
+            }
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .stroke(Color.accentBlue, lineWidth: Utils.isIPad ? 12 : 10)
         }
     }
     
     var answerBlock: some View {
-        LazyHGrid(rows: [.init(.fixed(answerBlockSize))]) {
-            ForEach(0..<logo.letterCount, id: \.self) { index in
+        LazyHGrid(rows: [.init(.fixed(answerBlockSize), spacing: blockSpacing)]) {
+            ForEach(0..<gameManager.logo.letterCount, id: \.self) { index in
                 ZStack {
-                    RoundedRectangle(cornerRadius: 5)
+                    Image(gameManager.answerTrialBackground(at: index))
+                        .resizable()
                         .frame(width: answerBlockSize, height: answerBlockSize)
-                        .foregroundColor(.lightGray)
-                    Text(revealedAnswers.count > index ? revealedAnswers[index] : "")
+                    Text(gameManager.answerTrialLetter(at: index))
+                        .font(font)
+                        .foregroundColor(gameManager.isSolvedAnswerLetter(at: index) ? .white : .black)
+                        .fontWeight(.medium)
                 }
                 .onTapGesture {
-                    revealedAnswers.remove(at: index)
-                    targetLetterIndex -= 1
+                    gameManager.removeAnswerLetter(at: index)
                 }
+//                .disabled(logoManager.isSolvedAnswerLetter(at: index))
             }
         }
     }
     
     var answerChoicesBlock: some View {
-        LazyVGrid(columns: Array(repeating: .init(.fixed(blockSize)), count: 5)) {
+        LazyVGrid(columns: Array(repeating: .init(.fixed(blockSize), spacing: blockSpacing), count: 5)) {
             ForEach(0..<10) { index in
                 ZStack {
-                    RoundedRectangle(cornerRadius: 5)
+                    Image(gameManager.answerChoiceBackground(at: index))
+                        .resizable()
                         .frame(width: blockSize, height: blockSize)
-                        .foregroundColor(.white)
-                    Text(logo.answerChoices[index])
+                    Text(gameManager.answerChoiceLetter(at: index))
+                        .font(font)
                 }
                 .onTapGesture {
-                    answerChoiceTapped(choice: logo.answerChoices[index])
+                    gameManager.tryAnswerChoice(at: index)
                 }
+                .disabled(gameManager.shouldDisableChoiceLetter(at: index))
             }
         }
+        .frame(maxHeight: nextButtonSize)
     }
     
-    var successView: some View {
-        ZStack {
-            Color.black.opacity(0.2)
-                .edgesIgnoringSafeArea(.all)
-            
-            VStack {
-                Spacer()
-                Color.accentBlue.opacity(0.9)
-                    .frame(width: parentSize.width / 4 * 3, height: parentSize.width / 4 * 3 * 1.5)
-                    .cornerRadius(20)
-                    .shadow(radius: 20)
-                    .padding(.vertical)
+    func bottomButton(name: String, action: @escaping () -> Void) -> some View {
+        Button {
+            action()
+        } label: {
+            Image(name)
+                .resizable()
+                .frame(width: bottomButtonSize, height: bottomButtonSize)
+        }
+        .disabled(gameManager.solved)
+    }
+    
+    var nextButton: some View {
+        Button {
+            if let nextLogo = logoListManager.nextLogo(currentId: gameManager.currentLogoID) {
+                gameManager.reset(logo: nextLogo)
             }
-            
-            VStack {
-                Text("Success")
-                    .font(.title)
-                    .fontWeight(.medium)
-                    .foregroundColor(.white)
-                
-                HStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(.basicBlue)
-                        .frame(width: 80, height: 80)
-                    
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(.basicBlue)
-                        .frame(width: 80, height: 80)
-                    
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(.basicBlue)
-                        .frame(width: 80, height: 80)
-                }
-            }
+        } label: {
+            Image("다음버튼")
+                .resizable()
+                .scaledToFit()
+                .frame(width: nextButtonSize)
         }
-    }
-    
-    func answerChoiceTapped(choice: String) {
-        if targetLetterIndex < logo.letterCount {
-            checkAnswer(choice: choice)
-        } else {
-            showWrongAnswerWarning()
-        }
-    }
-    
-    func checkAnswer(choice: String) {
-        if logo.letters[targetLetterIndex] == choice {
-            revealedAnswers.append(choice)
-            targetLetterIndex += 1
-        } else {
-            showWrongAnswerWarning()
-        }
-    }
-    
-    func showWrongAnswerWarning() {
-        isAnimatingErrorView = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            isAnimatingErrorView = false
-        }
+        .frame(maxHeight: nextButtonSize)
     }
 }
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {
-        GameView(logo: Logo(name: "꼬꼬면", answerChoices: ["면", "꼬", "삼", "개", "짜", "라" , "장", "선", "육", "꼬"]), parentSize: CGSize(width: 393, height: 852))
+        GameView(gameManager: GameManager(logo: Logo(name: "오동통면", solved: false, answerChoices: ["면", "꼬", "삼", "개", "짜", "라" , "장", "선", "육", "꼬"], id: 3), delegate: LogoListManager()) , parentSize: CGSize(width: 393, height: 852), trigger: Binding.constant(false))
     }
 }
