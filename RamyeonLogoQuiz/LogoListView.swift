@@ -10,7 +10,7 @@ import SwiftUI
 struct LogoListView: View {
     @StateObject var logoListManager = LogoListManager()
     @State var trigger: Bool = false
-    let gridSize: CGFloat = Utils.isIPad ? 200 : 100
+    let gridSize: CGFloat = Utils.isIPad ? 200 : 90
     let spacing: CGFloat = Utils.isIPad ? 40 : 20
     let checkmarkCircleSize: CGFloat = Utils.isIPad ? 34 : 17
     let cornerRadius: CGFloat = Utils.isIPad ? 12 : 6
