@@ -8,9 +8,14 @@
 import SwiftUI
 
 struct MainView: View {
+    let screenName: "main"
+    
     var body: some View {
         VStack {
             LogoListView()
+        }
+        .onAppear {
+            LogManager.sendScreenLog(screenName: screenName)
         }
     }
 }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct GameView: View {
+    let screenName = "game"
     @ObservedObject var gameManager: GameManager
     @Environment(\.presentationMode) var presentationMode
     let parentSize: CGSize
@@ -91,6 +92,9 @@ struct GameView: View {
                 .frame(width: backButtonSize, height: backButtonSize)
         })
         .navigationTitle("Stage \(gameManager.currentLogoID + 1)")
+        .onAppear {
+            LogManager.sendScreenLog(screenName: screenName)
+        }
     }
     
     var quizImage: some View {

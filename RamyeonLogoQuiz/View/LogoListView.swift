@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LogoListView: View {
+    let screenName = "logoList"
     @StateObject var logoListManager = LogoListManager()
     @State var trigger: Bool = false
     let gridSize: CGFloat = Utils.isIPad ? 200 : 90
@@ -34,6 +35,9 @@ struct LogoListView: View {
                                     gameView
                                 } label: {
                                     gridImage(logo: logo)
+                                        .onTapGesture {
+                                            LogManager.sendStageClickLog(screenName: screenName, buttonName: "stage_click", stageNumber: logo.id)
+                                        }
                                 }
                             }
                         }
@@ -49,6 +53,9 @@ struct LogoListView: View {
             logoListManager.updateLogoList()
             trigger = false
         })
+        .onAppear {
+            LogManager.sendScreenLog(screenName: screenName)
+        }
     }
     
     func gridImage(logo: Logo) -> some View {
