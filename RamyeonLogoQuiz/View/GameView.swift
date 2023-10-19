@@ -126,8 +126,8 @@ struct GameView: View {
     }
     
     var answerChoicesBlock: some View {
-        LazyVGrid(columns: Array(repeating: .init(.fixed(blockSize), spacing: blockSpacing), count: 5)) {
-            ForEach(0..<10) { index in
+        LazyVGrid(columns: Array(repeating: .init(.fixed(blockSize), spacing: blockSpacing), count: logoListManager.answerChoiceCount / 2)) {
+            ForEach(0..<logoListManager.answerChoiceCount) { index in
                 ZStack {
                     Image(gameManager.answerChoiceBackground(at: index))
                         .resizable()

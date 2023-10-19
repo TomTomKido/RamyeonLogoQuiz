@@ -9,6 +9,8 @@ import Foundation
 import Combine
 
 class LogoListManager: ObservableObject {
+    let answerChoiceCount = 12
+    
     private lazy var answerPool: [String] = {
         var answerCharacters: [String] = []
         (bongjiPaldo + bongjiOttugi + bongjiNongshim).shuffled().forEach { name in
@@ -57,30 +59,42 @@ class LogoListManager: ObservableObject {
     
     private func initializeLogoList() {
         if let data = UserDefaults.standard.object(forKey: "logoList") as? Data,
-           let logoList = try? JSONDecoder().decode([Logo].self, from: data) {
-            self.logoList = logoList
-            self.tempLogoList = logoList
-        } else {
-            let logoList = (bongjiPaldo + bongjiOttugi + bongjiNongshim).enumerated().map { (index, name) in
-                Logo(name: name, answerChoices: getAnswerChoices(name: name), id: index)
+           let oldLogoList = try? JSONDecoder().decode([Logo].self, from: data) {
+            
+            if oldLogoList[0].answerChoices.count == 12 {
+                self.logoList = oldLogoList
+                self.tempLogoList = oldLogoList
+            } else {
+                let mergedLogoList = (bongjiPaldo + bongjiOttugi + bongjiNongshim).enumerated().map { (index, name) in
+                    Logo(name: name, solved: oldLogoList[index].solved,answerChoices: getAnswerChoices(name: name), id: index)
+                }
+                
+                self.logoList = mergedLogoList
+                self.tempLogoList = mergedLogoList
             }
-            self.logoList = logoList
-            self.tempLogoList = logoList
+            
+            return
         }
+    
+        let newLogoList = (bongjiPaldo + bongjiOttugi + bongjiNongshim).enumerated().map { (index, name) in
+            Logo(name: name, answerChoices: getAnswerChoices(name: name), id: index)
+        }
+        self.logoList = newLogoList
+        self.tempLogoList = newLogoList
     }
     
     private func getAnswerChoices(name: String) -> [String] {
         var answerChoices: [String] = name.compactMap { String($0) }
         var index = 0
         
-        if answerChoices.count < 10 {
+        if answerChoices.count < answerChoiceCount {
             repeat {
                 let currentChar = String(answerPool[index])
                 if !answerChoices.contains(currentChar) {
                     answerChoices.append(currentChar)
                 }
                 index += 1
-            } while answerChoices.count < 10
+            } while answerChoices.count < answerChoiceCount
         }
         
         return answerChoices.shuffled()
