@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MainView: View {
-    let screenName: "main"
+    let screenName = "main"
     
     var body: some View {
         VStack {

@@ -17,14 +17,16 @@ struct GameView: View {
     let backButtonSize: CGFloat = Utils.isIPad ? 60 : 40
     let bottomButtonSize: CGFloat = Utils.isIPad ? 80 : 70
     let cornerRadius: CGFloat = Utils.isIPad ? 20 : 10
-    let nextButtonSize: CGFloat = Utils.isIPad ? 250 : 200
+    let nextButtonWidth: CGFloat = Utils.isIPad ? 250 : 170
+    let nextButtonAnswerChoicesAreaHeight: CGFloat = Utils.isIPad ? 250 : 100
     let font: Font = Utils.isIPad ? .largeTitle : .title2
     let padding: CGFloat = Utils.isIPad ? 30 : 20
     let blockSpacing: CGFloat = Utils.isIPad ? 20 : 10
     @EnvironmentObject var logoListManager: LogoListManager
     
     var imageBlockSize: CGFloat {
-        Utils.isIPad ? parentSize.height * 1 / 3 : parentSize.width * 2 / 3
+        parentSize.height * 1 / 3
+//        Utils.isIPad ? parentSize.height * 1 / 3 : parentSize.width * 2 / 3
     }
     
     var answerBlockSize: CGFloat {
@@ -38,14 +40,7 @@ struct GameView: View {
                 .ignoresSafeArea(.all)
                 .foregroundColor(.darkBlue)
             VStack(alignment: .center, spacing: 0) {
-                Rectangle()
-                    .ignoresSafeArea(.all)
-                    .foregroundColor(.basicBlue)
-                    .frame(height: Utils.isIPad ? 20 : 10)
-                Rectangle()
-                    .ignoresSafeArea(.all)
-                    .foregroundColor(.accentBlue)
-                    .frame(height: 5)
+                topNavigationBar
                 Spacer()
                 quizImage
                 Spacer()
@@ -53,32 +48,13 @@ struct GameView: View {
                 Spacer()
                 gameManager.solved ? AnyView(nextButton) : AnyView(answerChoicesBlock)
                 Spacer()
-                ZStack {
-                    VStack(spacing: 0) {
-                        Rectangle()
-                            .edgesIgnoringSafeArea(.all)
-                            .foregroundColor(.accentBlue)
-                            .frame(height: 5)
-                        Rectangle()
-                            .edgesIgnoringSafeArea(.all)
-                            .foregroundColor(.basicBlue)
-                            .frame(height: Utils.isIPad ? 130 : 100)
-                    }
-                    HStack {
-                        Spacer()
-                        bottomButton(name: "x_button") {
-                            gameManager.xButtonTapped()
-                        }
-                        Spacer()
-                        bottomButton(name: "retry_button") {
-                            gameManager.retryButtonTapped()
-                        }
-                        Spacer()
-                    }
-                    .padding(.bottom, padding/2)
-                }
-                .padding(.top, padding)
-                .frame(height: 70)
+                bottomCancelArea
+                    .padding(.top, padding)
+                    .frame(height: Utils.isIPad ? 150 : 90)
+                Rectangle()
+                    .edgesIgnoringSafeArea(.all)
+                    .foregroundColor(.accentBlue)
+                    .frame(height: 5)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -94,6 +70,19 @@ struct GameView: View {
         .navigationTitle("Stage \(gameManager.currentLogoID + 1)")
         .onAppear {
             LogManager.sendScreenLog(screenName: screenName)
+        }
+    }
+    
+    var topNavigationBar: some View {
+        VStack(spacing: 0) {
+            Rectangle()
+                .ignoresSafeArea(.all)
+                .foregroundColor(.basicBlue)
+                .frame(height: Utils.isIPad ? 20 : 10)
+            Rectangle()
+                .ignoresSafeArea(.all)
+                .foregroundColor(.accentBlue)
+                .frame(height: 5)
         }
     }
     
@@ -137,7 +126,6 @@ struct GameView: View {
                 .onTapGesture {
                     gameManager.removeAnswerLetter(at: index)
                 }
-//                .disabled(logoManager.isSolvedAnswerLetter(at: index))
             }
         }
     }
@@ -158,7 +146,7 @@ struct GameView: View {
                 .disabled(gameManager.shouldDisableChoiceLetter(at: index))
             }
         }
-        .frame(maxHeight: nextButtonSize)
+        .frame(maxHeight: nextButtonAnswerChoicesAreaHeight)
     }
     
     func bottomButton(name: String, action: @escaping () -> Void) -> some View {
@@ -181,9 +169,35 @@ struct GameView: View {
             Image("다음버튼")
                 .resizable()
                 .scaledToFit()
-                .frame(width: nextButtonSize)
+                .frame(width: nextButtonWidth)
         }
-        .frame(maxHeight: nextButtonSize)
+        .frame(maxHeight: nextButtonAnswerChoicesAreaHeight)
+    }
+    
+    var bottomCancelArea: some View {
+        ZStack {
+            VStack(spacing: 0) {
+                Rectangle()
+                    .edgesIgnoringSafeArea(.all)
+                    .foregroundColor(.accentBlue)
+                    .frame(height: 5)
+                Rectangle()
+                    .foregroundColor(.basicBlue)
+                    .frame(height: Utils.isIPad ? 130 : 100)
+            }
+            HStack {
+                Spacer()
+                bottomButton(name: "x_button") {
+                    gameManager.xButtonTapped()
+                }
+                Spacer()
+                bottomButton(name: "retry_button") {
+                    gameManager.retryButtonTapped()
+                }
+                Spacer()
+            }
+            .padding(.bottom, padding/2)
+        }
     }
 }
 

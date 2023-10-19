@@ -35,9 +35,9 @@ struct LogoListView: View {
                                     gameView
                                 } label: {
                                     gridImage(logo: logo)
-                                        .onTapGesture {
-                                            LogManager.sendStageClickLog(screenName: screenName, buttonName: "stage_click", stageNumber: logo.id)
-                                        }
+                                }
+                                .onTapGesture {
+                                    LogManager.sendStageClickLog(screenName: screenName, buttonName: "stage_click", stageNumber: logo.id)
                                 }
                             }
                         }

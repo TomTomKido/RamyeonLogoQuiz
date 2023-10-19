@@ -12,6 +12,7 @@ import SwiftUI
 class BannaerAdManager: NSObject {
     var bannerView: GADBannerView!
     weak var delegate: UIViewController?
+    let bannerSizeRatio: Double = 50 / 320
     
     override init() {
         super.init()
@@ -20,7 +21,7 @@ class BannaerAdManager: NSObject {
     
     private func setAds() {
         let width: Double = UIScreen.main.bounds.width
-        let height = Double(width * 50 / 320)
+        let height = Double(width * bannerSizeRatio)
         let adSize = GADAdSizeFromCGSize(CGSize(width: width, height: height)) //사이즈 직접지정
         bannerView = GADBannerView(adSize: adSize)
         
@@ -69,7 +70,7 @@ extension BannaerAdManager: GADBannerViewDelegate {
 
 extension BannaerAdManager {
     func updateAdSize(to width: CGFloat) {
-        let height = Double(width * 50 / 320)
+        let height = Double(width * bannerSizeRatio)
         let adSize = GADAdSizeFromCGSize(CGSize(width: width, height: height))
         bannerView.adSize = adSize
     }
@@ -80,7 +81,7 @@ class BannerViewController: UIViewController {
     var delegate: BannerView?
     
     func updateAdSize() {
-        let newWidth = view.frame.inset(by: view.safeAreaInsets).size.width
+        let newWidth = UIScreen.main.bounds.width
         bannerAdManager?.updateAdSize(to: newWidth)
     }
     

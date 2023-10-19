@@ -9,8 +9,12 @@ import SwiftUI
 
 struct RootView: View {
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             MainView()
+            BannerView()
+                .ignoresSafeArea()
+                .padding(0)
+                .frame(height: UIScreen.main.bounds.width * 50 / 320)
         }
     }
 }
