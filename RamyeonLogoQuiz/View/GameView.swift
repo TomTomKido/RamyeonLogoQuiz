@@ -22,11 +22,12 @@ struct GameView: View {
     let font: Font = Utils.isIPad ? .largeTitle : .title2
     let padding: CGFloat = Utils.isIPad ? 30 : 20
     let blockSpacing: CGFloat = Utils.isIPad ? 20 : 10
+    let topPadding: CGFloat = Utils.isIPad ? 90 : 40
+    let bottomPadding: CGFloat = Utils.isIPad ? 40 : 30
     @EnvironmentObject var logoListManager: LogoListManager
     
     var imageBlockSize: CGFloat {
         parentSize.height * 1 / 3
-//        Utils.isIPad ? parentSize.height * 1 / 3 : parentSize.width * 2 / 3
     }
     
     var answerBlockSize: CGFloat {
@@ -41,20 +42,14 @@ struct GameView: View {
                 .foregroundColor(.darkBlue)
             VStack(alignment: .center, spacing: 0) {
                 topNavigationBar
-                Spacer()
+                Spacer(minLength: topPadding)
                 quizImage
                 Spacer()
                 answerBlock
                 Spacer()
-                gameManager.solved ? AnyView(nextButton) : AnyView(answerChoicesBlock)
-                Spacer()
+                gameManager.solved ? AnyView(gameEndButton) : AnyView(answerChoicesBlock)
+                Spacer(minLength: bottomPadding)
                 bottomCancelArea
-                    .padding(.top, padding)
-                    .frame(height: Utils.isIPad ? 150 : 90)
-                Rectangle()
-                    .edgesIgnoringSafeArea(.all)
-                    .foregroundColor(.accentBlue)
-                    .frame(height: 5)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -160,6 +155,14 @@ struct GameView: View {
         .disabled(gameManager.solved)
     }
     
+    var gameEndButton: some View {
+        if let _ = logoListManager.nextLogo(currentId: gameManager.currentLogoID) {
+            return AnyView(nextButton)
+        } else {
+            return AnyView(endButton)
+        }
+    }
+    
     var nextButton: some View {
         Button {
             if let nextLogo = logoListManager.nextLogo(currentId: gameManager.currentLogoID) {
@@ -170,6 +173,20 @@ struct GameView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: nextButtonWidth)
+        }
+        .frame(maxHeight: nextButtonAnswerChoicesAreaHeight)
+    }
+    
+    var endButton: some View {
+        Button {
+            gameManager.reset()
+            trigger = true
+            self.presentationMode.wrappedValue.dismiss()
+        } label: {
+            Image("끝버튼")
+                .resizable()
+                .scaledToFit()
+                .frame(width: nextButtonWidth * 1.5)
         }
         .frame(maxHeight: nextButtonAnswerChoicesAreaHeight)
     }
@@ -196,8 +213,9 @@ struct GameView: View {
                 }
                 Spacer()
             }
-            .padding(.bottom, padding/2)
         }
+        .padding(.vertical, padding)
+        .frame(height: Utils.isIPad ? 150 : 90)
     }
 }
 
