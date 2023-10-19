@@ -15,6 +15,9 @@
 		D459C4FA2ADFF7B900B2ECFD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D459C4F92ADFF7B900B2ECFD /* GoogleService-Info.plist */; };
 		D459C4FC2ADFF7DD00B2ECFD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D459C4FB2ADFF7DD00B2ECFD /* AppDelegate.swift */; };
 		D459C4FE2ADFF88D00B2ECFD /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D459C4FD2ADFF88D00B2ECFD /* LogManager.swift */; };
+		D459C5032ADFFF9100B2ECFD /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = D459C5022ADFFF9100B2ECFD /* GoogleMobileAds */; };
+		D459C5052AE0002400B2ECFD /* BannerAdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D459C5042AE0002400B2ECFD /* BannerAdManager.swift */; };
+		D459C5092AE0016B00B2ECFD /* BannerAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D459C5082AE0016B00B2ECFD /* BannerAdView.swift */; };
 		D4B052DF2ABAA7B500BB1DE7 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B052DE2ABAA7B500BB1DE7 /* GameView.swift */; };
 		D4B052E32ABAB97300BB1DE7 /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B052E22ABAB97300BB1DE7 /* Color+Extension.swift */; };
 		D4D465EB2ACAF5D1005265F7 /* GameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D465EA2ACAF5D1005265F7 /* GameManager.swift */; };
@@ -34,6 +37,8 @@
 		D459C4F92ADFF7B900B2ECFD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D459C4FB2ADFF7DD00B2ECFD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D459C4FD2ADFF88D00B2ECFD /* LogManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
+		D459C5042AE0002400B2ECFD /* BannerAdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAdManager.swift; sourceTree = "<group>"; };
+		D459C5082AE0016B00B2ECFD /* BannerAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAdView.swift; sourceTree = "<group>"; };
 		D4B052DE2ABAA7B500BB1DE7 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
 		D4B052E22ABAB97300BB1DE7 /* Color+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
 		D4D465EA2ACAF5D1005265F7 /* GameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameManager.swift; sourceTree = "<group>"; };
@@ -56,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D459C5032ADFFF9100B2ECFD /* GoogleMobileAds in Frameworks */,
 				D459C4F22ADFF7AC00B2ECFD /* FirebaseAnalyticsSwift in Frameworks */,
 				D459C4F42ADFF7AC00B2ECFD /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				D459C4F82ADFF7AC00B2ECFD /* FirebaseRemoteConfigSwift in Frameworks */,
@@ -72,6 +78,7 @@
 			children = (
 				D4D660772AA5F0C500730B6D /* RamyeonLogoQuizApp.swift */,
 				D4D660792AA5F0C500730B6D /* RootView.swift */,
+				D459C5082AE0016B00B2ECFD /* BannerAdView.swift */,
 				D4D660852AA600CD00730B6D /* MainView.swift */,
 				D4D660892AA6078E00730B6D /* LogoListView.swift */,
 				D4B052DE2ABAA7B500BB1DE7 /* GameView.swift */,
@@ -87,6 +94,7 @@
 				D4D465F12AD2F506005265F7 /* Utils.swift */,
 				D4B052E22ABAB97300BB1DE7 /* Color+Extension.swift */,
 				D459C4FD2ADFF88D00B2ECFD /* LogManager.swift */,
+				D459C5042AE0002400B2ECFD /* BannerAdManager.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -153,6 +161,7 @@
 				D459C4F32ADFF7AC00B2ECFD /* FirebaseAnalyticsWithoutAdIdSupport */,
 				D459C4F52ADFF7AC00B2ECFD /* FirebaseRemoteConfig */,
 				D459C4F72ADFF7AC00B2ECFD /* FirebaseRemoteConfigSwift */,
+				D459C5022ADFFF9100B2ECFD /* GoogleMobileAds */,
 			);
 			productName = RamyeonLogoQuiz;
 			productReference = D4D660742AA5F0C500730B6D /* RamyeonLogoQuiz.app */;
@@ -184,6 +193,7 @@
 			mainGroup = D4D6606B2AA5F0C500730B6D;
 			packageReferences = (
 				D459C4EE2ADFF7AC00B2ECFD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				D459C5012ADFFF9100B2ECFD /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			productRefGroup = D4D660752AA5F0C500730B6D /* Products */;
 			projectDirPath = "";
@@ -215,6 +225,7 @@
 				D459C4FC2ADFF7DD00B2ECFD /* AppDelegate.swift in Sources */,
 				D4D6607A2AA5F0C500730B6D /* RootView.swift in Sources */,
 				D459C4FE2ADFF88D00B2ECFD /* LogManager.swift in Sources */,
+				D459C5092AE0016B00B2ECFD /* BannerAdView.swift in Sources */,
 				D4E144552AB81D9500EC93D7 /* Logo.swift in Sources */,
 				D4D6608A2AA6078E00730B6D /* LogoListView.swift in Sources */,
 				D4D465EF2AD2B7BD005265F7 /* Theme.swift in Sources */,
@@ -222,6 +233,7 @@
 				D4D660862AA600CD00730B6D /* MainView.swift in Sources */,
 				D4B052DF2ABAA7B500BB1DE7 /* GameView.swift in Sources */,
 				D4D465F22AD2F506005265F7 /* Utils.swift in Sources */,
+				D459C5052AE0002400B2ECFD /* BannerAdManager.swift in Sources */,
 				D4D9691B2AC8606800FFA748 /* LogoListManager.swift in Sources */,
 				D4D465EB2ACAF5D1005265F7 /* GameManager.swift in Sources */,
 				D4D660782AA5F0C500730B6D /* RamyeonLogoQuizApp.swift in Sources */,
@@ -362,6 +374,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -393,6 +406,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -439,6 +453,14 @@
 				minimumVersion = 9.0.0;
 			};
 		};
+		D459C5012ADFFF9100B2ECFD /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -466,6 +488,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D459C4EE2ADFF7AC00B2ECFD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseRemoteConfigSwift;
+		};
+		D459C5022ADFFF9100B2ECFD /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D459C5012ADFFF9100B2ECFD /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
