@@ -66,7 +66,7 @@ class LogoListManager: ObservableObject {
                 self.tempLogoList = oldLogoList
             } else {
                 let mergedLogoList = (bongjiPaldo + bongjiOttugi + bongjiNongshim).enumerated().map { (index, name) in
-                    Logo(name: name, solved: oldLogoList[index].solved,answerChoices: getAnswerChoices(name: name), id: index)
+                    Logo(name: name, solved: oldLogoList[index].solved, answerChoices: getAnswerChoices(name: name), id: index)
                 }
                 
                 self.logoList = mergedLogoList
